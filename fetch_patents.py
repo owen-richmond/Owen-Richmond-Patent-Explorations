@@ -1,19 +1,19 @@
+#!/usr/bin/env python3
 """
-NewSpace Patent Fetcher — Lens.org API
-======================================
-Fetches patent data for SpaceX, Blue Origin, Rocket Lab, and Virgin Galactic
-using the Lens.org Scholarly API (free tier, requires token).
+NewSpace Patent Fetcher — USPTO Open Data Portal (ODP)
+=======================================================
+Fetches granted US patent data for SpaceX, Blue Origin, and seven other
+NewSpace companies using the USPTO ODP Patent Applications Search API.
 
-HOW TO GET YOUR FREE TOKEN (takes ~2 minutes):
-  1. Go to https://www.lens.org/lens/user/subscriptions#patents
-  2. Sign up (free, no credit card)
-  3. Go to Account → Lens API
-  4. Click "Request Access" for the Patents API
-  5. You'll receive a token immediately (or within minutes)
-  6. Run:  python fetch_patents.py --token YOUR_TOKEN_HERE
-     Or:   set LENS_TOKEN=YOUR_TOKEN_HERE in your shell, then python fetch_patents.py
+Usage:
+    python3 fetch_patents.py                          # fetch all companies
+    python3 fetch_patents.py --companies SpaceX       # single company
+    python3 fetch_patents.py --dry-run                # print query JSON and exit
+    python3 fetch_patents.py --token YOUR_TOKEN       # override default token
 
-Output:  data/all_patents.csv  (used by the Streamlit dashboard)
+Output:
+    data/all_patents.csv          (used by the Streamlit dashboard)
+    data/patent_families.json     (family-level aggregations)
 """
 
 import argparse
@@ -26,55 +26,104 @@ from datetime import datetime
 import pandas as pd
 import requests
 
-# ── Config ───────────────────────────────────────────────────────────────────
+# ── Config ────────────────────────────────────────────────────────────────────
 
-LENS_API_URL = "https://api.lens.org/patent/search"
+ODP_URL    = "https://api.uspto.gov/api/v1/patent/applications/search"
 OUTPUT_DIR = "data"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Company names → Lens.org assignee search terms
+# Default API key — override via --token flag or USPTO_TOKEN env var.
+_DEFAULT_TOKEN = "tkdpmwsqonraguesssfdnfgflolqqd"
+
+# ODP rate-limit guidance: back off briefly on 429, no required delay otherwise.
+_PAGE_SIZE      = 100
+_SLEEP_ON_429   = 2.0
+_SLEEP_BETWEEN  = 0.15   # courtesy pause between pages
+
+# ── Company name variants ──────────────────────────────────────────────────────
+
 COMPANIES = {
     "SpaceX": [
         "Space Exploration Technologies Corp",
-        "SpaceX Technologies",
+        "Space Exploration Technologies Corporation",
+        "SpaceX",
+        "Starlink Communications",
     ],
     "Blue Origin": [
-        "Blue Origin, LLC",
         "Blue Origin LLC",
+        "Blue Origin, LLC",
+        "Blue Origin Federal",
         "Blue Origin",
     ],
     "Rocket Lab": [
+        "Rocket Lab USA Inc",
         "Rocket Lab USA, Inc.",
-        "Rocket Lab USA",
+        "Rocket Lab Limited",
         "Rocket Lab",
     ],
     "Virgin Galactic": [
-        "Virgin Galactic, LLC",
         "Virgin Galactic LLC",
-        "Virgin Galactic",
+        "Virgin Galactic, LLC",
         "The Spaceship Company",
+        "Virgin Galactic Holdings",
+        "Virgin Galactic",
+    ],
+    "Maxar Technologies": [
+        "Maxar Technologies",
+        "Maxar Technologies Inc",
+        "Maxar Technologies Ltd",
+        "DigitalGlobe",
+        "DigitalGlobe Inc",
+        "MDA",
+        "MDA Ltd",
+        "MDA Space",
+    ],
+    "Planet Labs": [
+        "Planet Labs",
+        "Planet Labs PBC",
+        "Planet Labs Inc",
+    ],
+    "Relativity Space": [
+        "Relativity Space",
+        "Relativity Space Inc",
+    ],
+    "Astra Space": [
+        "Astra Space",
+        "Astra Space Inc",
+    ],
+    "Sierra Nevada / Sierra Space": [
+        "Sierra Nevada Corporation",
+        "Sierra Space",
+        "Sierra Space Corporation",
     ],
 }
 
-# CPC code prefix → human-readable technology category
+# ── CPC code prefix -> technology category ─────────────────────────────────────
+
 CPC_CATEGORIES = [
-    ("H04B", "Satellite / Wireless Comms"),
-    ("H04W", "Satellite / Wireless Comms"),
-    ("H04L", "Satellite / Wireless Comms"),
-    ("H04N", "Satellite / Wireless Comms"),
-    ("H04", "Satellite / Wireless Comms"),
-    ("H01Q", "Antenna Design"),
-    ("H01P", "RF / Waveguides"),
-    ("H03", "Signal Processing"),
-    ("G01S", "Remote Sensing / GPS"),
-    ("B64G", "Spacecraft / Launch Systems"),
-    ("F02K", "Rocket Propulsion"),
-    ("F03H", "Propulsion (Other)"),
-    ("B64C", "Aeronautics / Structures"),
-    ("G06", "Computing / Software"),
-    ("H02", "Power / Electrical Systems"),
-    ("F16", "Mechanical Engineering"),
-    ("B23", "Manufacturing"),
+    ("H04B7/195", "Satellite / Wireless Comms"),
+    ("H04B7",     "Satellite / Wireless Comms"),
+    ("H04W84",    "Satellite / Wireless Comms"),
+    ("H04W",      "Satellite / Wireless Comms"),
+    ("H04L",      "Satellite / Wireless Comms"),
+    ("H04N",      "Satellite / Wireless Comms"),
+    ("H04",       "Satellite / Wireless Comms"),
+    ("H01Q",      "Antenna Design"),
+    ("H01P",      "Signal Processing"),
+    ("H03",       "Signal Processing"),
+    ("G01S",      "Remote Sensing / GPS"),
+    ("B64G1/62",  "Spacecraft / Launch Systems"),
+    ("B64G",      "Spacecraft / Launch Systems"),
+    ("F02K",      "Rocket Propulsion"),
+    ("F03H",      "Rocket Propulsion"),
+    ("F04D",      "Rocket Propulsion"),
+    ("B64C",      "Aeronautics / Structures"),
+    ("G06",       "Computing / Software"),
+    ("H02",       "Power / Electrical Systems"),
+    ("F16",       "Mechanical Engineering"),
+    ("B22F",      "Manufacturing"),
+    ("B23",       "Manufacturing"),
+    ("F17",       "Spacecraft / Launch Systems"),
 ]
 
 
@@ -89,140 +138,143 @@ def classify_cpc(cpc_codes: list[str]) -> str:
     return "Other"
 
 
-# ── Lens.org API helpers ──────────────────────────────────────────────────────
+# ── ODP API helpers ────────────────────────────────────────────────────────────
 
-def build_lens_query(assignee_names: list[str]) -> dict:
-    """Build Lens.org query: OR across assignee name variants."""
-    terms = [
-        {"match_phrase": {"assignee.name": name}}
-        for name in assignee_names
-    ]
-    base_query = {"bool": {"should": terms, "minimum_should_match": 1}}
-    return base_query
+def build_query(assignee_names: list[str]) -> str:
+    """
+    Build an OpenSearch Lucene query string matching any of the given
+    applicant name variants against the applicantBag.applicantNameText field.
+    """
+    terms = " OR ".join(f'"{name}"' for name in assignee_names)
+    return f"applicationMetaData.applicantBag.applicantNameText:({terms})"
 
 
 def fetch_company_patents(company: str, assignee_names: list[str], token: str) -> pd.DataFrame:
-    """Page through Lens.org API to fetch all patents for one company."""
+    """Fetch all granted patents for one company using offset pagination."""
     print(f"\n{'='*60}")
     print(f"Fetching: {company}")
-    print(f"  Aliases: {assignee_names}")
+    print(f"  Aliases: {', '.join(assignee_names)}")
 
     headers = {
-        "Authorization": f"Bearer {token}",
+        "x-api-key": token,
         "Content-Type": "application/json",
     }
 
-    include_fields = [
-        "lens_id",
-        "title",
-        "publication_type",
-        "date_published",
-        "filing_date",
-        "priority_date",
-        "publication_number",
-        "application_number",
-        "assignee",
-        "inventor",
-        "abstract",
-        "claims",
-        "classifications.cpc",
-        "legal_status",
-        "jurisdiction",
-        "families.family_id",
-        "families.members",
-        "references_cited",
-    ]
+    base_payload: dict = {
+        "q": build_query(assignee_names),
+        "filters": [
+            {
+                "name": "applicationMetaData.publicationCategoryBag",
+                "value": ["Granted/Issued"],
+            }
+        ],
+        "sort": [{"field": "applicationMetaData.filingDate", "order": "Desc"}],
+        "fields": ["applicationNumberText", "applicationMetaData"],
+    }
 
-    all_results = []
-    from_offset = 0
-    page_size = 100  # Lens.org max per page
-    total = None
+    all_results: list[dict] = []
+    offset  = 0
+    total   = None
+    retries = 0
+    t_start = time.time()
 
     while True:
         payload = {
-            "query": build_lens_query(assignee_names),
-            "include": include_fields,
-            "size": page_size,
-            "from": from_offset,
-            "sort": [{"date_published": "desc"}],
+            **base_payload,
+            "pagination": {"offset": offset, "limit": _PAGE_SIZE},
         }
 
         try:
-            resp = requests.post(
-                LENS_API_URL,
-                headers=headers,
-                json=payload,
-                timeout=30,
-            )
+            resp = requests.post(ODP_URL, headers=headers, json=payload, timeout=60)
         except requests.exceptions.RequestException as e:
             print(f"  Network error: {e}")
             break
 
         if resp.status_code == 429:
-            wait = int(resp.headers.get("Retry-After", 10))
-            print(f"  Rate limited — waiting {wait}s...")
-            time.sleep(wait)
+            print(f"  Rate limited — waiting {_SLEEP_ON_429}s ...")
+            time.sleep(_SLEEP_ON_429)
             continue
 
-        if resp.status_code != 200:
-            print(f"  Error {resp.status_code}: {resp.text[:300]}")
-            if resp.status_code == 401:
-                print("  ► Your token is invalid or expired. Get a new one at lens.org")
+        if resp.status_code == 404:
+            # ODP returns 404 when the page has no results (end of set)
             break
 
+        if resp.status_code not in (200, 201):
+            print(f"  Error {resp.status_code}: {resp.text[:400]}")
+            retries += 1
+            if retries >= 3:
+                print("  Max retries reached, moving on.")
+                break
+            time.sleep(5 * retries)
+            continue
+
+        retries = 0
         data = resp.json()
-        hits = data.get("data", [])
+        hits = data.get("patentFileWrapperDataBag") or []
+
         if total is None:
-            total = data.get("total", 0)
-            print(f"  Total found: {total}")
+            # ODP doesn't return total_hits reliably; track via empty page
+            total = data.get("count", 0)
+            print(f"  First-page count: {total}")
 
         if not hits:
             break
 
         all_results.extend(hits)
-        fetched = len(all_results)
-        print(f"  Fetched {fetched}/{total} patents")
+        print(f"  Fetched {len(all_results):,}  (page offset {offset})")
 
-        if fetched >= total:
+        if len(hits) < _PAGE_SIZE:
+            # Last page — fewer results than requested means we're done
             break
 
-        from_offset += page_size
-        time.sleep(0.5)
+        offset += _PAGE_SIZE
+        time.sleep(_SLEEP_BETWEEN)
 
-    print(f"  Done — {len(all_results)} patents for {company}")
-    return parse_lens_results(all_results, company)
+    elapsed = time.time() - t_start
+    print(f"  Done — {len(all_results):,} records in {elapsed:.1f}s")
+    return parse_odp_results(all_results, company)
 
 
-def parse_lens_results(raw: list, company: str) -> pd.DataFrame:
-    """Flatten Lens.org patent records into a tidy DataFrame."""
+def _clean_cpc(raw: str) -> str:
+    """Remove internal whitespace from ODP CPC strings like 'H04N  23/90'."""
+    parts = raw.strip().split()
+    return "".join(parts)
+
+
+def parse_odp_results(raw: list[dict], company: str) -> pd.DataFrame:
+    """Flatten USPTO ODP patent records into a tidy DataFrame."""
     rows = []
-    for p in raw:
-        # Title
-        title_raw = p.get("title", [])
-        title = title_raw[0].get("text", "") if isinstance(title_raw, list) and title_raw else str(title_raw)
+    for item in raw:
+        app_num = item.get("applicationNumberText") or ""
+        meta    = item.get("applicationMetaData") or {}
 
-        # Abstract
-        abs_raw = p.get("abstract", [])
-        abstract = abs_raw[0].get("text", "")[:400] if isinstance(abs_raw, list) and abs_raw else ""
+        title       = meta.get("inventionTitle") or ""
+        filing_date = meta.get("filingDate") or meta.get("effectiveFilingDate") or ""
+        grant_date  = meta.get("grantDate") or ""
+        patent_num  = str(meta.get("patentNumber") or "").strip()
+        status_desc = meta.get("applicationStatusDescriptionText") or ""
 
-        # Assignee (first / primary)
-        assignees = p.get("assignee") or []
-        primary_assignee = assignees[0].get("name", "") if assignees else ""
+        # Applicant / assignee
+        applicant_bag    = meta.get("applicantBag") or []
+        primary_assignee = applicant_bag[0].get("applicantNameText", "") if applicant_bag else ""
 
-        # Inventors (count)
-        inventors = p.get("inventor") or []
-        inventor_count = len(inventors)
+        # Inventors
+        inventor_bag   = meta.get("inventorBag") or []
+        inventor_names = "; ".join(
+            i.get("inventorNameText") or f"{i.get('firstName','')} {i.get('lastName','')}".strip()
+            for i in inventor_bag[:10]
+            if i.get("inventorNameText") or i.get("lastName")
+        )
+        inventor_count = len(inventor_bag)
 
-        # CPC codes
-        cpcs_raw = p.get("classifications", {}).get("cpc", []) or []
-        cpc_codes = [c.get("symbol", "") for c in cpcs_raw if c.get("symbol")]
-        tech_category = classify_cpc(cpc_codes)
+        # CPC codes — strip extra whitespace from ODP format ("H04N  23/90" → "H04N23/90")
+        cpc_raw   = meta.get("cpcClassificationBag") or []
+        cpc_codes = [_clean_cpc(c) for c in cpc_raw if c.strip()]
+        tech_cat  = classify_cpc(cpc_codes)
 
         # Dates
-        filing_date = p.get("filing_date") or p.get("priority_date") or ""
-        pub_date = p.get("date_published") or ""
-        filing_year = None
-        pub_year = None
+        pub_date = grant_date or filing_date
+        filing_year = pub_year = None
         try:
             if filing_date:
                 filing_year = int(str(filing_date)[:4])
@@ -234,107 +286,154 @@ def parse_lens_results(raw: list, company: str) -> pd.DataFrame:
         except (ValueError, TypeError):
             pass
 
-        # Jurisdiction (from publication_number prefix e.g. US, EP, WO)
-        pub_num = p.get("publication_number") or p.get("application_number") or ""
-        jurisdiction = pub_num[:2] if pub_num and len(pub_num) >= 2 else "XX"
-        if not jurisdiction.isalpha():
-            jurisdiction = "XX"
-
-        # Family size
-        families = p.get("families") or []
-        family_id = families[0].get("family_id", "") if families else ""
-        family_size = len(families[0].get("members", [])) if families else 1
-
-        # Legal status
-        legal = p.get("legal_status") or {}
-        status = "granted" if legal.get("granted") else "pending"
-        if legal.get("expired") or legal.get("lapsed"):
+        # Status
+        status_lower = status_desc.lower()
+        if "patent" in status_lower or "grant" in status_lower:
+            status = "granted"
+        elif "abandon" in status_lower or "expire" in status_lower or "lapse" in status_lower:
             status = "expired/lapsed"
+        else:
+            status = "granted"  # all results are Granted/Issued filtered
 
         rows.append({
-            "company": company,
-            "lens_id": p.get("lens_id", ""),
-            "pub_number": pub_num,
-            "title": title,
-            "abstract": abstract,
-            "pub_type": p.get("publication_type", ""),
-            "status": status,
-            "assignee": primary_assignee,
-            "jurisdiction": jurisdiction,
-            "filing_date": filing_date,
-            "filing_year": filing_year,
-            "pub_date": pub_date,
-            "pub_year": pub_year,
-            "cpc_codes": "|".join(cpc_codes[:8]),
-            "tech_category": tech_category,
+            "company":        company,
+            "lens_id":        app_num,
+            "pub_number":     f"US{patent_num}" if patent_num else "",
+            "title":          title,
+            "abstract":       "",   # not available in ODP metadata search
+            "pub_type":       "grant",
+            "status":         status,
+            "assignee":       primary_assignee,
+            "jurisdiction":   "US",
+            "filing_date":    filing_date,
+            "filing_year":    filing_year,
+            "pub_date":       pub_date,
+            "pub_year":       pub_year,
+            "cpc_codes":      "|".join(cpc_codes[:8]),
+            "tech_category":  tech_cat,
             "inventor_count": inventor_count,
-            "family_id": family_id,
-            "family_size": family_size,
+            "family_id":      "",
+            "family_size":    1,
+            "priority_date":  meta.get("effectiveFilingDate") or "",
+            "grant_date":     grant_date,
+            "expiration_date": "",
+            "inventors":      inventor_names,
+            "claims_count":   0,
+            "cited_by_count": 0,
         })
 
     return pd.DataFrame(rows)
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
+def save_family_summary(df: pd.DataFrame) -> None:
+    """Write a family-level aggregation JSON for optional dashboard use."""
+    if df.empty or "family_id" not in df.columns:
+        return
+    fam = (
+        df[df["family_id"].notna() & (df["family_id"] != "")]
+        .groupby("family_id")
+        .agg(
+            company=("company",       "first"),
+            size=   ("lens_id",       "count"),
+            tech=   ("tech_category", "first"),
+            filed=  ("filing_date",   "min"),
+        )
+        .reset_index()
+        .rename(columns={"filed": "earliest_filing"})
+        .to_dict(orient="records")
+    )
+    path = os.path.join(OUTPUT_DIR, "patent_families.json")
+    with open(path, "w") as f:
+        json.dump(fam, f, indent=2)
+    print(f"  Family summary: {len(fam)} families -> {path}")
 
-def main():
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+
+def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Fetch NewSpace patent data from Lens.org",
+        description="Fetch NewSpace patent data from USPTO Open Data Portal",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
     parser.add_argument(
         "--token",
-        default=os.environ.get("LENS_TOKEN", ""),
-        help="Lens.org API Bearer token (or set LENS_TOKEN env var)",
+        default=os.environ.get("USPTO_TOKEN", _DEFAULT_TOKEN),
+        help="USPTO ODP API key (or set USPTO_TOKEN env var)",
     )
     parser.add_argument(
         "--companies",
         nargs="+",
         choices=list(COMPANIES.keys()),
         default=list(COMPANIES.keys()),
-        help="Which companies to fetch (default: all)",
+        help="Companies to fetch (default: all)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default=OUTPUT_DIR,
+        help="Directory for CSV output (default: data/)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print query string for each company and exit without calling the API",
     )
     args = parser.parse_args()
 
     if not args.token:
-        print("ERROR: No Lens.org API token provided.")
-        print()
-        print("Get a free token in ~2 minutes:")
-        print("  1. Go to  https://www.lens.org/lens/user/subscriptions#patents")
-        print("  2. Sign up (free, no credit card)")
-        print("  3. Go to Account → Lens API → Request Access")
-        print("  4. Run:  python fetch_patents.py --token YOUR_TOKEN")
-        print("     Or:   export LENS_TOKEN=YOUR_TOKEN && python fetch_patents.py")
+        print("ERROR: No API token provided.")
         sys.exit(1)
 
-    print("NewSpace Patent Fetcher")
-    print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"Fetching data for: {', '.join(args.companies)}")
+    os.makedirs(args.output_dir, exist_ok=True)
+
+    if args.dry_run:
+        print("DRY RUN — queries only, no API calls\n")
+        for company in args.companies:
+            q = build_query(COMPANIES[company])
+            print(f"--- {company} ---")
+            print(q)
+            print()
+        return
+
+    print("NewSpace Patent Fetcher  (USPTO Open Data Portal)")
+    print(f"Started:   {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Companies: {', '.join(args.companies)}")
+    t0 = time.time()
 
     all_dfs = []
     for company in args.companies:
-        aliases = COMPANIES[company]
-        df = fetch_company_patents(company, aliases, args.token)
+        df = fetch_company_patents(company, COMPANIES[company], args.token)
         if not df.empty:
-            path = os.path.join(OUTPUT_DIR, f"{company.replace(' ', '_').lower()}_patents.csv")
+            slug = company.replace(" ", "_").replace("/", "-").lower()
+            path = os.path.join(args.output_dir, f"{slug}_patents.csv")
             df.to_csv(path, index=False)
-            print(f"  Saved → {path}")
+            print(f"  Saved -> {path}")
             all_dfs.append(df)
 
     if not all_dfs:
-        print("\nNo data fetched. Check your token and connection.")
+        print("\nNo data fetched. Check your token and network connection.")
         sys.exit(1)
 
     combined = pd.concat(all_dfs, ignore_index=True)
-    out_path = os.path.join(OUTPUT_DIR, "all_patents.csv")
-    combined.to_csv(out_path, index=False)
 
+    # Deduplicate by application number
+    before   = len(combined)
+    combined = combined.drop_duplicates(subset=["lens_id"], keep="first")
+    after    = len(combined)
+    if before != after:
+        print(f"\nDeduplication: removed {before - after:,} duplicate application numbers")
+
+    out_path = os.path.join(args.output_dir, "all_patents.csv")
+    combined.to_csv(out_path, index=False)
+    save_family_summary(combined)
+
+    elapsed = time.time() - t0
     print(f"\n{'='*60}")
-    print(f"Combined: {len(combined)} patents → {out_path}")
+    print(f"Total: {len(combined):,} patents -> {out_path}")
+    print(f"Elapsed: {elapsed/60:.1f} min")
     print("\nBy company:")
-    print(combined.groupby("company")["lens_id"].count().to_string())
-    print("\nBy tech category:")
+    print(combined.groupby("company")["lens_id"].count().sort_values(ascending=False).to_string())
+    print("\nBy technology category:")
     print(
         combined.groupby("tech_category")["lens_id"]
         .count()
@@ -342,7 +441,7 @@ def main():
         .to_string()
     )
     print(f"\nDone: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"\nNext step:  streamlit run dashboard.py")
+    print("\nNext:  streamlit run dashboard.py")
 
 
 if __name__ == "__main__":

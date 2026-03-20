@@ -3,8 +3,8 @@ Seed / sample patent dataset for the NewSpace dashboard.
 Based on publicly documented patent portfolios (as of 2025).
 Used when real API data has not yet been fetched.
 
-Includes a curated SpaceX Starlink phased-array antenna family
-with realistic prosecution history for the family tree panel.
+Includes seven curated patent families with realistic prosecution
+histories for the family tree panel.
 """
 
 import pandas as pd
@@ -63,6 +63,8 @@ SPACEX_TITLES = [
     ("Re-entry vehicle thermal protection using ablative materials", "B64G1/58", "Spacecraft / Launch Systems"),
     ("Electric propulsion system for station keeping in LEO", "B64G1/40", "Spacecraft / Launch Systems"),
     ("Launch vehicle interstage separation mechanism", "B64G1/64", "Spacecraft / Launch Systems"),
+    ("Flat-panel satellite with integrated ion propulsion and stowable solar arrays", "B64G1/28", "Spacecraft / Launch Systems"),
+    ("Satellite constellation frequency reuse via spot beam coordination", "H04W16/14", "Satellite / Wireless Comms"),
 ]
 
 BLUE_ORIGIN_TITLES = [
@@ -134,10 +136,72 @@ VIRGIN_GALACTIC_TITLES = [
     ("Cabin window assembly for high-altitude pressure differential", "B64C1/14", "Aeronautics / Structures"),
 ]
 
+MAXAR_TITLES = [
+    ("High-resolution electro-optical imaging satellite bus", "B64G1/10", "Spacecraft / Launch Systems"),
+    ("Synthetic aperture radar for Earth observation from LEO", "G01S13/90", "Remote Sensing / GPS"),
+    ("GEO satellite bus with electric propulsion station keeping", "B64G1/40", "Spacecraft / Launch Systems"),
+    ("Satellite image tasking and scheduling optimization algorithm", "G06Q10/06", "Computing / Software"),
+    ("On-orbit image compression and downlink management system", "H04N19/00", "Satellite / Wireless Comms"),
+    ("Geospatial data fusion from multi-source satellite imagery", "G01C11/00", "Remote Sensing / GPS"),
+    ("High-throughput Ka-band satellite communications payload", "H04B7/185", "Satellite / Wireless Comms"),
+    ("Deployable large aperture reflector antenna for GEO satellites", "H01Q15/14", "Antenna Design"),
+    ("Satellite imaging scheduling for time-critical reconnaissance", "G06Q10/04", "Computing / Software"),
+    ("Multi-spectral imaging payload for land cover classification", "G01S17/88", "Remote Sensing / GPS"),
+    ("Satellite-derived change detection using convolutional neural networks", "G06V20/10", "Computing / Software"),
+    ("Spacecraft thermal radiator panel deployment mechanism", "B64G1/50", "Spacecraft / Launch Systems"),
+    ("High-power solar array for GEO communications satellite", "H02S10/40", "Power / Electrical Systems"),
+    ("Satellite attitude estimation with star tracker sensor fusion", "B64G1/36", "Spacecraft / Launch Systems"),
+    ("Precision pointing system for high-resolution optical telescope payload", "G01C21/24", "Remote Sensing / GPS"),
+]
 
-# ── Curated SpaceX phased-array antenna patent family ─────────────────────────
-# Models a realistic prosecution history: original US application ->
-# continuation chain -> PCT -> national phase entries -> divisional
+PLANET_LABS_TITLES = [
+    ("CubeSat imaging payload with push-broom sensor architecture", "G01S17/88", "Remote Sensing / GPS"),
+    ("Daily revisit Earth imaging constellation scheduling algorithm", "B64G1/10", "Spacecraft / Launch Systems"),
+    ("Ground station downlink prioritization for high-cadence imaging", "H04B7/185", "Satellite / Wireless Comms"),
+    ("Low-cost satellite attitude control using magnetorquers", "B64G1/36", "Spacecraft / Launch Systems"),
+    ("Automated image quality assessment pipeline for satellite imagery", "G06T7/00", "Computing / Software"),
+    ("CubeSat form factor imager with precision focus mechanism", "G01C11/00", "Remote Sensing / GPS"),
+    ("Satellite imagery analytics platform for agricultural monitoring", "G06V20/10", "Computing / Software"),
+    ("Miniaturized reaction wheel assembly for nanosatellite pointing", "B64G1/28", "Spacecraft / Launch Systems"),
+    ("Cloud mask generation for multispectral satellite image time series", "G06V10/25", "Computing / Software"),
+    ("Rapid manufacturing process for high-volume small satellite production", "B64G1/00", "Spacecraft / Launch Systems"),
+]
+
+RELATIVITY_SPACE_TITLES = [
+    ("Additive manufactured rocket engine combustion chamber", "F02K9/10", "Rocket Propulsion"),
+    ("Large-scale metal 3D printing system for aerospace structures", "B22F10/00", "Manufacturing"),
+    ("Bimetallic additive manufactured rocket nozzle with internal cooling channels", "F02K9/00", "Rocket Propulsion"),
+    ("Autonomous robotic assembly of additive manufactured rocket components", "B25J11/00", "Manufacturing"),
+    ("Printed propellant tank for launch vehicle constructed via direct energy deposition", "B64G1/40", "Spacecraft / Launch Systems"),
+    ("Machine learning process control for rocket engine additive manufacturing", "G05B19/418", "Computing / Software"),
+    ("Multi-material additive manufactured thrust structure for small launch vehicles", "B64C1/00", "Aeronautics / Structures"),
+    ("Software-defined manufacturing workflow for iterative rocket development", "G05B19/00", "Computing / Software"),
+]
+
+ASTRA_SPACE_TITLES = [
+    ("Autogenous pressurization system for small launch vehicle propellant tanks", "F02K9/44", "Rocket Propulsion"),
+    ("Avionics architecture for automated small launch vehicle operations", "B64G1/24", "Spacecraft / Launch Systems"),
+    ("Mobile launch platform and vehicle integration for responsive launch", "B64G5/00", "Spacecraft / Launch Systems"),
+    ("Propellant cross-feed system for small two-stage launch vehicles", "F02K9/00", "Rocket Propulsion"),
+    ("Compact attitude control module for small launch vehicles", "B64G1/26", "Spacecraft / Launch Systems"),
+    ("Rapid manufacturing and assembly process for low-cost launch vehicles", "B64G1/00", "Spacecraft / Launch Systems"),
+    ("Trajectory optimization for small launch vehicle to multiple orbits", "B64G1/10", "Spacecraft / Launch Systems"),
+]
+
+SIERRA_SPACE_TITLES = [
+    ("Lifting body reentry vehicle thermal protection system", "B64G1/58", "Spacecraft / Launch Systems"),
+    ("Cargo integration and deployment system for Dream Chaser orbital vehicle", "B64G1/64", "Spacecraft / Launch Systems"),
+    ("Inflatable space habitat module pressure vessel and hatch assembly", "B64G1/12", "Spacecraft / Launch Systems"),
+    ("Reusable orbital vehicle landing gear and airframe structure", "B64C25/00", "Aeronautics / Structures"),
+    ("Orbital maneuvering system propulsion for reusable spaceplane", "B64G1/40", "Spacecraft / Launch Systems"),
+    ("Atmospheric reentry guidance navigation and control for lifting body", "B64G1/24", "Spacecraft / Launch Systems"),
+    ("Life support and environmental control for commercial space station module", "B64G1/58", "Spacecraft / Launch Systems"),
+    ("Flexible solar array deployment mechanism for orbital platforms", "B64G1/44", "Spacecraft / Launch Systems"),
+    ("Docking interface and capture mechanism for commercial cargo vehicle", "B64G1/64", "Spacecraft / Launch Systems"),
+]
+
+
+# ── Curated patent family 1: SpaceX Starlink phased-array antenna ─────────────
 
 STARLINK_ANTENNA_FAMILY = [
     {
@@ -155,7 +219,7 @@ STARLINK_ANTENNA_FAMILY = [
         "abstract": (
             "A phased array antenna system for communication with low Earth orbit satellites, "
             "comprising a plurality of antenna elements arranged to provide electronically steerable "
-            "beams with low latency pointing for broadband user terminals."
+            "beams with low-latency pointing for broadband user terminals."
         ),
         "parent_id": None,
         "relationship": None,
@@ -166,7 +230,7 @@ STARLINK_ANTENNA_FAMILY = [
     {
         "node_id": "SX-PA-002",
         "pub_number": "WO2017127323A1",
-        "title": "Phased array antenna for satellite communication — international filing",
+        "title": "Phased array antenna for satellite communication (PCT)",
         "filing_type": "PCT Application",
         "status": "pending",
         "jurisdiction": "WO",
@@ -408,103 +472,385 @@ STARLINK_ANTENNA_FAMILY = [
 ]
 
 
-# ── Helper to build the general patent rows ───────────────────────────────────
+# ── Curated patent family 2: SpaceX Starlink satellite bus ────────────────────
 
-def _make_patents(titles_cpcs: list, company: str, year_range: tuple, grant_rate: float) -> list:
-    rng = np.random.default_rng(hash(company) % (2**32))
-    rows = []
-    filing_years = rng.integers(year_range[0], year_range[1], size=len(titles_cpcs))
-    jurisdictions = rng.choice(["US", "US", "US", "US", "WO", "EP"], size=len(titles_cpcs))
+STARLINK_SAT_BUS_FAMILY = [
+    {
+        "node_id": "SX-SB-001",
+        "pub_number": "US10800551B2",
+        "title": "Flat-panel satellite with stowable solar arrays and integrated ion thruster",
+        "filing_type": "Priority Application",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2016-09-15",
+        "filing_year": 2016,
+        "grant_date": "2020-10-13",
+        "cpc_codes": "B64G1/28|B64G1/40|H02S10/40",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "A flat-panel satellite design enabling high-density stacking within a launch vehicle "
+            "fairing, with stowable solar arrays that deploy on orbit and an integrated Krypton "
+            "ion propulsion system for station keeping and deorbit."
+        ),
+        "parent_id": None,
+        "relationship": None,
+        "claims_count": 32,
+        "inventors": "Riggs, Brian; Meneghetti, Luca; Sharma, Priya",
+        "family_id": "FAM-SX-SB-001",
+    },
+    {
+        "node_id": "SX-SB-002",
+        "pub_number": "WO2018022254A1",
+        "title": "Flat-panel satellite bus design (PCT)",
+        "filing_type": "PCT Application",
+        "status": "pending",
+        "jurisdiction": "WO",
+        "filing_date": "2017-08-01",
+        "filing_year": 2017,
+        "grant_date": None,
+        "cpc_codes": "B64G1/28|B64G1/40",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "International patent application for the Starlink satellite bus architecture, "
+            "claiming priority to US15/267389 and covering the flat-panel form factor and "
+            "stacked launch configuration."
+        ),
+        "parent_id": "SX-SB-001",
+        "relationship": "PCT",
+        "claims_count": 26,
+        "inventors": "Riggs, Brian; Meneghetti, Luca; Sharma, Priya",
+        "family_id": "FAM-SX-SB-001",
+    },
+    {
+        "node_id": "SX-SB-003",
+        "pub_number": "US11286062B2",
+        "title": "Satellite deployment mechanism for high-density stacked launch configuration",
+        "filing_type": "Continuation",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2018-11-20",
+        "filing_year": 2018,
+        "grant_date": "2022-03-29",
+        "cpc_codes": "B64G1/64|B64G1/28|B64G1/10",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "A continuation of US10800551 directed to claims covering the deployment sequencing "
+            "mechanism that releases individual satellites from a stacked launch configuration "
+            "without contact between adjacent spacecraft."
+        ),
+        "parent_id": "SX-SB-001",
+        "relationship": "Continuation",
+        "claims_count": 20,
+        "inventors": "Riggs, Brian; Chen, Wei; Patel, Anika",
+        "family_id": "FAM-SX-SB-001",
+    },
+    {
+        "node_id": "SX-SB-004",
+        "pub_number": "EP3490902B1",
+        "title": "Flat-panel satellite bus with ion propulsion (EP)",
+        "filing_type": "EP National Phase",
+        "status": "granted",
+        "jurisdiction": "EP",
+        "filing_date": "2019-01-18",
+        "filing_year": 2019,
+        "grant_date": "2022-04-27",
+        "cpc_codes": "B64G1/28|B64G1/40",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "European national phase entry of WO2018022254, covering the flat-panel satellite "
+            "architecture with integrated propulsion for large LEO constellations."
+        ),
+        "parent_id": "SX-SB-002",
+        "relationship": "EP National Phase",
+        "claims_count": 18,
+        "inventors": "Riggs, Brian; Meneghetti, Luca; Sharma, Priya",
+        "family_id": "FAM-SX-SB-001",
+    },
+    {
+        "node_id": "SX-SB-005",
+        "pub_number": "JP7008011B2",
+        "title": "Flat-panel satellite bus with stowable solar array (JP)",
+        "filing_type": "JP National Phase",
+        "status": "granted",
+        "jurisdiction": "JP",
+        "filing_date": "2019-01-18",
+        "filing_year": 2019,
+        "grant_date": "2022-01-14",
+        "cpc_codes": "B64G1/28|B64G1/44",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "Japan national phase entry of WO2018022254 covering stowable solar array "
+            "deployment methods for flat-panel satellite configurations."
+        ),
+        "parent_id": "SX-SB-002",
+        "relationship": "JP National Phase",
+        "claims_count": 14,
+        "inventors": "Riggs, Brian; Meneghetti, Luca",
+        "family_id": "FAM-SX-SB-001",
+    },
+    {
+        "node_id": "SX-SB-006",
+        "pub_number": "US11027867B2",
+        "title": "Ion propulsion station keeping and deorbit method for LEO satellite",
+        "filing_type": "Divisional",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2019-06-04",
+        "filing_year": 2019,
+        "grant_date": "2021-06-08",
+        "cpc_codes": "B64G1/40|B64G1/26",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "A divisional of US10800551 directed specifically to method claims for using "
+            "Krypton ion propulsion to maintain orbital altitude and perform controlled "
+            "atmospheric deorbit within regulatory timelines."
+        ),
+        "parent_id": "SX-SB-001",
+        "relationship": "Divisional",
+        "claims_count": 16,
+        "inventors": "Meneghetti, Luca; Sharma, Priya",
+        "family_id": "FAM-SX-SB-001",
+    },
+]
 
-    for i, (title, cpc, category) in enumerate(titles_cpcs):
-        fy = int(filing_years[i])
-        granted = rng.random() < grant_rate
-        status = "granted" if granted else "pending"
-        pub_year = fy + rng.integers(1, 4)
 
-        rows.append({
-            "company": company,
-            "lens_id": f"SEED-{company[:3].upper()}-{i:04d}",
-            "pub_number": f"{jurisdictions[i]}{10000000 + i + hash(company) % 100000:09d}",
-            "title": title,
-            "abstract": f"[Sample] {title}.",
-            "pub_type": "granted_patent" if granted else "patent_application",
-            "status": status,
-            "assignee": company,
-            "jurisdiction": jurisdictions[i],
-            "filing_date": f"{fy}-{rng.integers(1,13):02d}-{rng.integers(1,29):02d}",
-            "filing_year": fy,
-            "pub_date": f"{pub_year}-{rng.integers(1,13):02d}-{rng.integers(1,29):02d}",
-            "pub_year": int(pub_year),
-            "cpc_codes": cpc,
-            "tech_category": category,
-            "inventor_count": int(rng.integers(1, 7)),
-            "family_id": f"FAM-{company[:3].upper()}-{i // 3:04d}",
-            "family_size": int(rng.integers(1, 8)),
-            # Fields only used by family tree panel
-            "filing_type": None,
-            "parent_id": None,
-            "relationship": None,
-            "claims_count": int(rng.integers(8, 30)),
-            "inventors": "",
-        })
-    return rows
+# ── Curated patent family 3: SpaceX inter-satellite optical link ───────────────
+
+STARLINK_ISL_FAMILY = [
+    {
+        "node_id": "SX-ISL-001",
+        "pub_number": "US11502751B2",
+        "title": "Free-space optical terminal for inter-satellite links in LEO constellations",
+        "filing_type": "Priority Application",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2018-04-23",
+        "filing_year": 2018,
+        "grant_date": "2022-11-15",
+        "cpc_codes": "H04B10/112|H04B10/11|H01Q1/12",
+        "tech_category": "Satellite / Wireless Comms",
+        "abstract": (
+            "A free-space optical communication terminal for establishing inter-satellite links "
+            "between LEO spacecraft, enabling a mesh network without ground-station relay hops "
+            "and reducing end-to-end latency for transoceanic traffic."
+        ),
+        "parent_id": None,
+        "relationship": None,
+        "claims_count": 30,
+        "inventors": "Ellis, Rachel; Park, Jin-Ho; Bergmann, Felix",
+        "family_id": "FAM-SX-ISL-001",
+    },
+    {
+        "node_id": "SX-ISL-002",
+        "pub_number": "WO2019209799A1",
+        "title": "Inter-satellite optical link terminal (PCT)",
+        "filing_type": "PCT Application",
+        "status": "pending",
+        "jurisdiction": "WO",
+        "filing_date": "2019-04-22",
+        "filing_year": 2019,
+        "grant_date": None,
+        "cpc_codes": "H04B10/112|H04B10/11",
+        "tech_category": "Satellite / Wireless Comms",
+        "abstract": (
+            "International filing claiming priority to US15/960432, covering the optical "
+            "terminal design for bidirectional inter-satellite links between Starlink v2 satellites."
+        ),
+        "parent_id": "SX-ISL-001",
+        "relationship": "PCT",
+        "claims_count": 24,
+        "inventors": "Ellis, Rachel; Park, Jin-Ho; Bergmann, Felix",
+        "family_id": "FAM-SX-ISL-001",
+    },
+    {
+        "node_id": "SX-ISL-003",
+        "pub_number": "US11770173B2",
+        "title": "Beam acquisition and pointing method for inter-satellite optical links",
+        "filing_type": "Continuation",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2019-11-12",
+        "filing_year": 2019,
+        "grant_date": "2023-09-26",
+        "cpc_codes": "H04B10/112|G01S17/66|H04B10/118",
+        "tech_category": "Satellite / Wireless Comms",
+        "abstract": (
+            "A continuation of US11502751 directed to the acquisition, pointing, and tracking "
+            "protocol enabling rapid link establishment between satellites at orbital closing speeds."
+        ),
+        "parent_id": "SX-ISL-001",
+        "relationship": "Continuation",
+        "claims_count": 22,
+        "inventors": "Ellis, Rachel; Nguyen, Linh; Park, Jin-Ho",
+        "family_id": "FAM-SX-ISL-001",
+    },
+    {
+        "node_id": "SX-ISL-004",
+        "pub_number": "EP3785382B1",
+        "title": "Free-space optical inter-satellite link terminal (EP)",
+        "filing_type": "EP National Phase",
+        "status": "granted",
+        "jurisdiction": "EP",
+        "filing_date": "2020-10-21",
+        "filing_year": 2020,
+        "grant_date": "2023-05-17",
+        "cpc_codes": "H04B10/112|H04B10/11",
+        "tech_category": "Satellite / Wireless Comms",
+        "abstract": (
+            "European national phase entry of WO2019209799, covering the optical terminal "
+            "hardware for inter-satellite mesh networking."
+        ),
+        "parent_id": "SX-ISL-002",
+        "relationship": "EP National Phase",
+        "claims_count": 16,
+        "inventors": "Ellis, Rachel; Park, Jin-Ho; Bergmann, Felix",
+        "family_id": "FAM-SX-ISL-001",
+    },
+    {
+        "node_id": "SX-ISL-005",
+        "pub_number": "US20230074059A1",
+        "title": "Adaptive optics compensation for atmospheric turbulence in near-earth optical links",
+        "filing_type": "Continuation-in-Part",
+        "status": "pending",
+        "jurisdiction": "US",
+        "filing_date": "2021-09-08",
+        "filing_year": 2021,
+        "grant_date": None,
+        "cpc_codes": "H04B10/112|G02B26/06|H04B10/118",
+        "tech_category": "Satellite / Wireless Comms",
+        "abstract": (
+            "A continuation-in-part introducing new matter directed to wavefront sensing and "
+            "correction techniques for optical links in the lower atmosphere, extending the "
+            "technology to ground-to-satellite optical communications."
+        ),
+        "parent_id": "SX-ISL-001",
+        "relationship": "Continuation-in-Part",
+        "claims_count": 26,
+        "inventors": "Bergmann, Felix; Park, Jin-Ho; Walsh, Emily",
+        "family_id": "FAM-SX-ISL-001",
+    },
+]
 
 
-def get_sample_data() -> pd.DataFrame:
-    """Return a realistic sample dataset for the dashboard."""
-    all_rows = []
-    all_rows.extend(_make_patents(SPACEX_TITLES,          "SpaceX",         (2014, 2025), 0.65))
-    all_rows.extend(_make_patents(BLUE_ORIGIN_TITLES,     "Blue Origin",    (2013, 2025), 0.70))
-    all_rows.extend(_make_patents(ROCKET_LAB_TITLES,      "Rocket Lab",     (2016, 2025), 0.55))
-    all_rows.extend(_make_patents(VIRGIN_GALACTIC_TITLES, "Virgin Galactic", (2010, 2025), 0.60))
+# ── Curated patent family 4: SpaceX Falcon 9 grid fin deployment ──────────────
 
-    # Replace the first SpaceX family with the curated antenna family so the
-    # family tree panel has rich, realistic prosecution history.
-    antenna_rows = []
-    for rec in STARLINK_ANTENNA_FAMILY:
-        antenna_rows.append({
-            "company": "SpaceX",
-            "lens_id": rec["node_id"],
-            "pub_number": rec["pub_number"],
-            "title": rec["title"],
-            "abstract": rec["abstract"],
-            "pub_type": "granted_patent" if rec["status"] == "granted" else "patent_application",
-            "status": rec["status"],
-            "assignee": "Space Exploration Technologies Corp",
-            "jurisdiction": rec["jurisdiction"],
-            "filing_date": rec["filing_date"],
-            "filing_year": rec["filing_year"],
-            "pub_date": rec.get("grant_date") or "",
-            "pub_year": int(rec["grant_date"][:4]) if rec.get("grant_date") else None,
-            "cpc_codes": rec["cpc_codes"],
-            "tech_category": rec["tech_category"],
-            "inventor_count": len(rec["inventors"].split(";")),
-            "family_id": rec["family_id"],
-            "family_size": len(STARLINK_ANTENNA_FAMILY),
-            "filing_type": rec["filing_type"],
-            "parent_id": rec["parent_id"],
-            "relationship": rec["relationship"],
-            "claims_count": rec["claims_count"],
-            "inventors": rec["inventors"],
-        })
+FALCON_GRID_FIN_FAMILY = [
+    {
+        "node_id": "SX-GF-001",
+        "pub_number": "US9665136B2",
+        "title": "Deployable grid fin for atmospheric reentry aerodynamic control",
+        "filing_type": "Priority Application",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2014-06-20",
+        "filing_year": 2014,
+        "grant_date": "2017-05-30",
+        "cpc_codes": "B64G1/62|B64C3/54|B64C9/00",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "A deployable grid fin system for a returning launch vehicle booster, providing "
+            "aerodynamic stabilization and steering authority during hypersonic and subsonic "
+            "powered descent to enable precision propulsive landing."
+        ),
+        "parent_id": None,
+        "relationship": None,
+        "claims_count": 28,
+        "inventors": "Koenigsmann, Hans; Bjelde, Brian; Musk, Elon",
+        "family_id": "FAM-SX-GF-001",
+    },
+    {
+        "node_id": "SX-GF-002",
+        "pub_number": "WO2015200124A1",
+        "title": "Deployable grid fin for reusable launch vehicle (PCT)",
+        "filing_type": "PCT Application",
+        "status": "pending",
+        "jurisdiction": "WO",
+        "filing_date": "2015-06-19",
+        "filing_year": 2015,
+        "grant_date": None,
+        "cpc_codes": "B64G1/62|B64C3/54",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "International PCT application claiming priority to US14/311224, covering the "
+            "deployable grid fin concept for reusable booster recovery systems globally."
+        ),
+        "parent_id": "SX-GF-001",
+        "relationship": "PCT",
+        "claims_count": 22,
+        "inventors": "Koenigsmann, Hans; Bjelde, Brian",
+        "family_id": "FAM-SX-GF-001",
+    },
+    {
+        "node_id": "SX-GF-003",
+        "pub_number": "US10040560B2",
+        "title": "Aerodynamic braking trajectory for reusable launch vehicle booster",
+        "filing_type": "Continuation",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2016-09-14",
+        "filing_year": 2016,
+        "grant_date": "2018-08-07",
+        "cpc_codes": "B64G1/62|B64G1/24|G05D1/10",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "A continuation of US9665136 directed to method claims for computing and executing "
+            "an aerodynamic braking trajectory using deployable grid fins during booster descent."
+        ),
+        "parent_id": "SX-GF-001",
+        "relationship": "Continuation",
+        "claims_count": 20,
+        "inventors": "Koenigsmann, Hans; Kynard, Branden",
+        "family_id": "FAM-SX-GF-001",
+    },
+    {
+        "node_id": "SX-GF-004",
+        "pub_number": "EP3160851B1",
+        "title": "Deployable grid fin for launch vehicle atmospheric reentry (EP)",
+        "filing_type": "EP National Phase",
+        "status": "granted",
+        "jurisdiction": "EP",
+        "filing_date": "2016-12-14",
+        "filing_year": 2016,
+        "grant_date": "2021-04-07",
+        "cpc_codes": "B64G1/62|B64C3/54",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "European national phase entry of WO2015200124, covering grid fin mechanisms "
+            "for aerodynamic control of reusable booster vehicles during atmospheric reentry."
+        ),
+        "parent_id": "SX-GF-002",
+        "relationship": "EP National Phase",
+        "claims_count": 15,
+        "inventors": "Koenigsmann, Hans; Bjelde, Brian",
+        "family_id": "FAM-SX-GF-001",
+    },
+    {
+        "node_id": "SX-GF-005",
+        "pub_number": "US10654605B2",
+        "title": "Electrically actuated grid fin for launch vehicle aerodynamic control",
+        "filing_type": "Continuation-in-Part",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2018-05-22",
+        "filing_year": 2018,
+        "grant_date": "2020-05-19",
+        "cpc_codes": "B64C3/54|B64G1/62|H02K7/00",
+        "tech_category": "Spacecraft / Launch Systems",
+        "abstract": (
+            "A continuation-in-part of US9665136 introducing new matter covering electrically "
+            "actuated grid fin designs that replace hydraulic actuation, reducing system mass "
+            "and complexity in the Falcon 9 Block 5 booster configuration."
+        ),
+        "parent_id": "SX-GF-001",
+        "relationship": "Continuation-in-Part",
+        "claims_count": 24,
+        "inventors": "Koenigsmann, Hans; Bjelde, Brian; Chen, Wei",
+        "family_id": "FAM-SX-GF-001",
+    },
+]
 
-    df = pd.DataFrame(all_rows)
-    df_antenna = pd.DataFrame(antenna_rows)
-    # Remove any existing FAM-SPA-0000 rows and substitute the curated family
-    df = df[df["family_id"] != "FAM-SPA-0000"]
-    df = pd.concat([df, df_antenna], ignore_index=True)
-    return df
 
-
-def get_antenna_family() -> list[dict]:
-    return STARLINK_ANTENNA_FAMILY
-
-
-# ── Blue Origin VTOL reusable landing family ─────────────────────────────────
-# US8678321B2 — the patent SpaceX challenged via IPR2015-01765 at the PTAB.
-# The PTAB denied institution. This family illustrates competitive IP dynamics
-# between the two leading reusable launch vehicle companies.
+# ── Curated patent family 5: Blue Origin VTOL reusable landing ────────────────
 
 BLUE_ORIGIN_VTOL_FAMILY = [
     {
@@ -522,8 +868,8 @@ BLUE_ORIGIN_VTOL_FAMILY = [
         "abstract": (
             "A vertical takeoff and landing vehicle configured for operation from sea-based "
             "and land-based platforms, incorporating powered descent guidance and propulsive "
-            "landing on floating or fixed surfaces. Claims cover the concept of reusable "
-            "booster landing on unimproved or mobile surfaces."
+            "landing on floating or fixed surfaces. Claims cover reusable booster landing "
+            "on unimproved or mobile surfaces."
         ),
         "parent_id": None,
         "relationship": None,
@@ -566,8 +912,8 @@ BLUE_ORIGIN_VTOL_FAMILY = [
         "cpc_codes": "B64G1/62|B64C29/00",
         "tech_category": "Spacecraft / Launch Systems",
         "abstract": (
-            "European national phase entry from WO2012112309, pending examination at the "
-            "European Patent Office."
+            "European national phase entry from WO2012112309, pending examination "
+            "at the European Patent Office."
         ),
         "parent_id": "BO-VL-002",
         "relationship": "EP National Phase",
@@ -621,7 +967,7 @@ BLUE_ORIGIN_VTOL_FAMILY = [
     {
         "node_id": "BO-VL-006",
         "pub_number": "IPR2015-01765",
-        "title": "SpaceX IPR petition — challenging US8678321B2 reusable landing claims",
+        "title": "SpaceX IPR petition challenging US8678321B2 reusable landing claims",
         "filing_type": "IPR Challenge",
         "status": "denied",
         "jurisdiction": "USPTO/PTAB",
@@ -667,11 +1013,367 @@ BLUE_ORIGIN_VTOL_FAMILY = [
 ]
 
 
+# ── Curated patent family 6: Blue Origin BE-4 engine ─────────────────────────
+
+BLUE_ORIGIN_BE4_FAMILY = [
+    {
+        "node_id": "BO-BE4-001",
+        "pub_number": "US10378474B2",
+        "title": "Full-flow staged combustion cycle rocket engine with oxidizer-rich preburner",
+        "filing_type": "Priority Application",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2014-09-10",
+        "filing_year": 2014,
+        "grant_date": "2019-08-13",
+        "cpc_codes": "F02K9/10|F02K9/58|F02K9/00",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "A full-flow staged combustion cycle rocket engine burning liquid oxygen and "
+            "liquefied natural gas, using an oxidizer-rich preburner to drive high-pressure "
+            "turbopumps. The BE-4 engine is designed for reuse across multiple flights "
+            "and serves as the primary propulsion for the New Glenn orbital launch vehicle."
+        ),
+        "parent_id": None,
+        "relationship": None,
+        "claims_count": 34,
+        "inventors": "Vilas, Gary; Crocker, Andrew; Guzik, Mark",
+        "family_id": "FAM-BO-BE4-001",
+    },
+    {
+        "node_id": "BO-BE4-002",
+        "pub_number": "WO2016040126A1",
+        "title": "Full-flow staged combustion rocket engine (PCT)",
+        "filing_type": "PCT Application",
+        "status": "pending",
+        "jurisdiction": "WO",
+        "filing_date": "2015-09-04",
+        "filing_year": 2015,
+        "grant_date": None,
+        "cpc_codes": "F02K9/10|F02K9/58",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "International patent application covering the BE-4 full-flow staged combustion "
+            "engine architecture, claiming priority to US14/483199."
+        ),
+        "parent_id": "BO-BE4-001",
+        "relationship": "PCT",
+        "claims_count": 28,
+        "inventors": "Vilas, Gary; Crocker, Andrew; Guzik, Mark",
+        "family_id": "FAM-BO-BE4-001",
+    },
+    {
+        "node_id": "BO-BE4-003",
+        "pub_number": "US10934965B2",
+        "title": "Combustion chamber geometry for full-flow staged combustion engine",
+        "filing_type": "Continuation",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2016-10-01",
+        "filing_year": 2016,
+        "grant_date": "2021-03-02",
+        "cpc_codes": "F02K9/10|F02K9/52|F23R3/00",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "A continuation of US10378474 directed to claims covering specific combustion "
+            "chamber geometries that improve mixing efficiency and reduce combustion instability "
+            "in high chamber-pressure LOX/LNG engines."
+        ),
+        "parent_id": "BO-BE4-001",
+        "relationship": "Continuation",
+        "claims_count": 22,
+        "inventors": "Vilas, Gary; Eddlemon, Thomas",
+        "family_id": "FAM-BO-BE4-001",
+    },
+    {
+        "node_id": "BO-BE4-004",
+        "pub_number": "EP3191696B1",
+        "title": "Full-flow staged combustion rocket engine (EP)",
+        "filing_type": "EP National Phase",
+        "status": "granted",
+        "jurisdiction": "EP",
+        "filing_date": "2016-08-12",
+        "filing_year": 2016,
+        "grant_date": "2022-02-16",
+        "cpc_codes": "F02K9/10|F02K9/58",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "European national phase entry of WO2016040126, covering the staged combustion "
+            "cycle engine architecture for high-performance, reusable liquid rocket engines."
+        ),
+        "parent_id": "BO-BE4-002",
+        "relationship": "EP National Phase",
+        "claims_count": 18,
+        "inventors": "Vilas, Gary; Crocker, Andrew; Guzik, Mark",
+        "family_id": "FAM-BO-BE4-001",
+    },
+    {
+        "node_id": "BO-BE4-005",
+        "pub_number": "US11022071B2",
+        "title": "Turbopump assembly for cryogenic staged combustion rocket engine",
+        "filing_type": "Divisional",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2018-08-14",
+        "filing_year": 2018,
+        "grant_date": "2021-06-01",
+        "cpc_codes": "F04D25/00|F02K9/58|F02K9/44",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "A divisional of US10378474 covering the turbopump assembly claims, specifically "
+            "directed to the high-speed centrifugal pump rotor and bearing systems that "
+            "enable the high chamber pressure of the BE-4 engine."
+        ),
+        "parent_id": "BO-BE4-001",
+        "relationship": "Divisional",
+        "claims_count": 18,
+        "inventors": "Crocker, Andrew; Guzik, Mark",
+        "family_id": "FAM-BO-BE4-001",
+    },
+]
+
+
+# ── Curated patent family 7: Rocket Lab Electron electric turbopump ───────────
+
+ROCKET_LAB_TURBOPUMP_FAMILY = [
+    {
+        "node_id": "RL-TP-001",
+        "pub_number": "US10844798B2",
+        "title": "Electric motor driven turbopump for bipropellant rocket engine",
+        "filing_type": "Priority Application",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2015-11-03",
+        "filing_year": 2015,
+        "grant_date": "2020-11-24",
+        "cpc_codes": "F04D25/00|F02K9/44|H02K7/00",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "A battery-powered electric motor turbopump system for pumping liquid oxygen and "
+            "kerosene propellants in a small rocket engine. The Rutherford engine eliminates "
+            "a gas generator cycle preburner, replacing it with a compact BLDC motor and "
+            "lithium polymer battery system, significantly simplifying engine design."
+        ),
+        "parent_id": None,
+        "relationship": None,
+        "claims_count": 29,
+        "inventors": "Beck, Peter; Stickland, Lachlan; Withy, Shaun",
+        "family_id": "FAM-RL-TP-001",
+    },
+    {
+        "node_id": "RL-TP-002",
+        "pub_number": "NZ727087",
+        "title": "Electric turbopump for rocket engine (NZ priority filing)",
+        "filing_type": "Priority Application",
+        "status": "granted",
+        "jurisdiction": "NZ",
+        "filing_date": "2014-11-04",
+        "filing_year": 2014,
+        "grant_date": "2017-08-25",
+        "cpc_codes": "F04D25/00|F02K9/44",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "New Zealand priority filing establishing the earliest priority date for the "
+            "electric turbopump technology, granted by the Intellectual Property Office of New Zealand."
+        ),
+        "parent_id": None,
+        "relationship": None,
+        "claims_count": 20,
+        "inventors": "Beck, Peter; Stickland, Lachlan",
+        "family_id": "FAM-RL-TP-001",
+    },
+    {
+        "node_id": "RL-TP-003",
+        "pub_number": "WO2016073407A1",
+        "title": "Electric turbopump for liquid rocket engine (PCT)",
+        "filing_type": "PCT Application",
+        "status": "pending",
+        "jurisdiction": "WO",
+        "filing_date": "2015-11-03",
+        "filing_year": 2015,
+        "grant_date": None,
+        "cpc_codes": "F04D25/00|F02K9/44|H02K7/00",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "PCT international application claiming priority to NZ727087, covering the "
+            "electric motor turbopump concept for use in small and medium-class liquid rocket engines."
+        ),
+        "parent_id": "RL-TP-002",
+        "relationship": "PCT",
+        "claims_count": 24,
+        "inventors": "Beck, Peter; Stickland, Lachlan; Withy, Shaun",
+        "family_id": "FAM-RL-TP-001",
+    },
+    {
+        "node_id": "RL-TP-004",
+        "pub_number": "US11306681B2",
+        "title": "Pump speed control method for electric turbopump rocket engine",
+        "filing_type": "Continuation",
+        "status": "granted",
+        "jurisdiction": "US",
+        "filing_date": "2017-07-25",
+        "filing_year": 2017,
+        "grant_date": "2022-04-19",
+        "cpc_codes": "F04D25/00|F02K9/58|H02P6/00",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "A continuation of US10844798 directed to method claims for controlling pump "
+            "speed and mixture ratio in flight to manage propellant consumption and engine "
+            "performance during ascent."
+        ),
+        "parent_id": "RL-TP-001",
+        "relationship": "Continuation",
+        "claims_count": 18,
+        "inventors": "Beck, Peter; Withy, Shaun",
+        "family_id": "FAM-RL-TP-001",
+    },
+    {
+        "node_id": "RL-TP-005",
+        "pub_number": "EP3215730B1",
+        "title": "Electric motor driven turbopump for bipropellant rocket engine (EP)",
+        "filing_type": "EP National Phase",
+        "status": "granted",
+        "jurisdiction": "EP",
+        "filing_date": "2016-04-29",
+        "filing_year": 2016,
+        "grant_date": "2021-07-14",
+        "cpc_codes": "F04D25/00|F02K9/44|H02K7/00",
+        "tech_category": "Rocket Propulsion",
+        "abstract": (
+            "European national phase entry of WO2016073407, covering the electric turbopump "
+            "architecture for liquid rocket engines. Granted after examination at the EPO."
+        ),
+        "parent_id": "RL-TP-003",
+        "relationship": "EP National Phase",
+        "claims_count": 16,
+        "inventors": "Beck, Peter; Stickland, Lachlan; Withy, Shaun",
+        "family_id": "FAM-RL-TP-001",
+    },
+]
+
+
+# ── Helper to build general patent rows ──────────────────────────────────────
+
+def _make_patents(titles_cpcs: list, company: str, year_range: tuple, grant_rate: float) -> list:
+    rng = np.random.default_rng(hash(company) % (2**32))
+    rows = []
+    filing_years = rng.integers(year_range[0], year_range[1], size=len(titles_cpcs))
+    jurisdictions = rng.choice(["US", "US", "US", "US", "WO", "EP"], size=len(titles_cpcs))
+
+    for i, (title, cpc, category) in enumerate(titles_cpcs):
+        fy = int(filing_years[i])
+        granted = rng.random() < grant_rate
+        status = "granted" if granted else "pending"
+        pub_year = fy + rng.integers(1, 4)
+
+        rows.append({
+            "company": company,
+            "lens_id": f"SEED-{company[:3].upper()}-{i:04d}",
+            "pub_number": f"{jurisdictions[i]}{10000000 + i + hash(company) % 100000:09d}",
+            "title": title,
+            "abstract": f"[Sample] {title}.",
+            "pub_type": "granted_patent" if granted else "patent_application",
+            "status": status,
+            "assignee": company,
+            "jurisdiction": jurisdictions[i],
+            "filing_date": f"{fy}-{rng.integers(1,13):02d}-{rng.integers(1,29):02d}",
+            "filing_year": fy,
+            "pub_date": f"{pub_year}-{rng.integers(1,13):02d}-{rng.integers(1,29):02d}",
+            "pub_year": int(pub_year),
+            "cpc_codes": cpc,
+            "tech_category": category,
+            "inventor_count": int(rng.integers(1, 7)),
+            "family_id": f"FAM-{company[:3].upper()}-{i // 3:04d}",
+            "family_size": int(rng.integers(1, 8)),
+            "filing_type": None,
+            "parent_id": None,
+            "relationship": None,
+            "claims_count": int(rng.integers(8, 30)),
+            "inventors": "",
+        })
+    return rows
+
+
+def _family_to_rows(family: list, company: str, assignee: str) -> list:
+    """Convert a curated family list to the full DataFrame schema."""
+    rows = []
+    for rec in family:
+        rows.append({
+            "company": company,
+            "lens_id": rec["node_id"],
+            "pub_number": rec["pub_number"],
+            "title": rec["title"],
+            "abstract": rec["abstract"],
+            "pub_type": "granted_patent" if rec["status"] == "granted" else "patent_application",
+            "status": rec["status"],
+            "assignee": assignee,
+            "jurisdiction": rec["jurisdiction"],
+            "filing_date": rec["filing_date"],
+            "filing_year": rec["filing_year"],
+            "pub_date": rec.get("grant_date") or "",
+            "pub_year": int(rec["grant_date"][:4]) if rec.get("grant_date") else None,
+            "cpc_codes": rec["cpc_codes"],
+            "tech_category": rec["tech_category"],
+            "inventor_count": len(rec["inventors"].split(";")),
+            "family_id": rec["family_id"],
+            "family_size": len(family),
+            "filing_type": rec["filing_type"],
+            "parent_id": rec["parent_id"],
+            "relationship": rec["relationship"],
+            "claims_count": rec["claims_count"],
+            "inventors": rec["inventors"],
+        })
+    return rows
+
+
+def get_sample_data() -> pd.DataFrame:
+    """Return a realistic sample dataset covering nine NewSpace companies."""
+    all_rows = []
+    all_rows.extend(_make_patents(SPACEX_TITLES,          "SpaceX",                       (2014, 2025), 0.65))
+    all_rows.extend(_make_patents(BLUE_ORIGIN_TITLES,     "Blue Origin",                  (2013, 2025), 0.70))
+    all_rows.extend(_make_patents(ROCKET_LAB_TITLES,      "Rocket Lab",                   (2016, 2025), 0.55))
+    all_rows.extend(_make_patents(VIRGIN_GALACTIC_TITLES, "Virgin Galactic",              (2010, 2025), 0.60))
+    all_rows.extend(_make_patents(MAXAR_TITLES,           "Maxar Technologies",           (2005, 2025), 0.72))
+    all_rows.extend(_make_patents(PLANET_LABS_TITLES,     "Planet Labs",                  (2012, 2025), 0.55))
+    all_rows.extend(_make_patents(RELATIVITY_SPACE_TITLES,"Relativity Space",             (2016, 2025), 0.50))
+    all_rows.extend(_make_patents(ASTRA_SPACE_TITLES,     "Astra Space",                  (2016, 2025), 0.45))
+    all_rows.extend(_make_patents(SIERRA_SPACE_TITLES,    "Sierra Nevada / Sierra Space", (2008, 2025), 0.65))
+
+    df = pd.DataFrame(all_rows)
+
+    # Replace generic seed rows for the first family group of each company with
+    # the curated prosecution histories, which have rich, realistic data.
+    curated_rows = []
+    curated_rows.extend(_family_to_rows(STARLINK_ANTENNA_FAMILY, "SpaceX",      "Space Exploration Technologies Corp"))
+    curated_rows.extend(_family_to_rows(STARLINK_SAT_BUS_FAMILY, "SpaceX",      "Space Exploration Technologies Corp"))
+    curated_rows.extend(_family_to_rows(STARLINK_ISL_FAMILY,     "SpaceX",      "Space Exploration Technologies Corp"))
+    curated_rows.extend(_family_to_rows(FALCON_GRID_FIN_FAMILY,  "SpaceX",      "Space Exploration Technologies Corp"))
+    curated_rows.extend(_family_to_rows(BLUE_ORIGIN_VTOL_FAMILY, "Blue Origin", "Blue Origin LLC"))
+    curated_rows.extend(_family_to_rows(BLUE_ORIGIN_BE4_FAMILY,  "Blue Origin", "Blue Origin LLC"))
+    curated_rows.extend(_family_to_rows(ROCKET_LAB_TURBOPUMP_FAMILY, "Rocket Lab", "Rocket Lab USA Inc"))
+    df_curated = pd.DataFrame(curated_rows)
+
+    # Remove the first seed family for SpaceX, Blue Origin, Rocket Lab (FAM-SPA-0000, etc.)
+    drop_families = {"FAM-SPA-0000", "FAM-BLU-0000", "FAM-ROC-0000"}
+    df = df[~df["family_id"].isin(drop_families)]
+    df = pd.concat([df, df_curated], ignore_index=True)
+    return df
+
+
+def get_antenna_family() -> list[dict]:
+    return STARLINK_ANTENNA_FAMILY
+
+
 def get_all_families() -> dict:
     """Return all curated patent families as {display_label: records_list}."""
     return {
         "SpaceX  |  Starlink Phased-Array Antenna  (US10236574B2)": STARLINK_ANTENNA_FAMILY,
+        "SpaceX  |  Starlink Satellite Bus  (US10800551B2)": STARLINK_SAT_BUS_FAMILY,
+        "SpaceX  |  Inter-Satellite Optical Link  (US11502751B2)": STARLINK_ISL_FAMILY,
+        "SpaceX  |  Falcon 9 Grid Fin Deployment  (US9665136B2)": FALCON_GRID_FIN_FAMILY,
         "Blue Origin  |  VTOL Reusable Landing  (US8678321B2 + IPR2015-01765)": BLUE_ORIGIN_VTOL_FAMILY,
+        "Blue Origin  |  BE-4 Staged Combustion Engine  (US10378474B2)": BLUE_ORIGIN_BE4_FAMILY,
+        "Rocket Lab  |  Electron Electric Turbopump  (US10844798B2)": ROCKET_LAB_TURBOPUMP_FAMILY,
     }
 
 
@@ -680,5 +1382,6 @@ if __name__ == "__main__":
     import os
     os.makedirs("data", exist_ok=True)
     df.to_csv("data/all_patents_sample.csv", index=False)
-    print(f"Sample: {len(df)} rows")
-    print(df.groupby("company")["lens_id"].count())
+    print(f"Sample dataset: {len(df)} rows")
+    print(df.groupby("company")["lens_id"].count().sort_values(ascending=False))
+    print("\nFamilies available:", list(get_all_families().keys()))

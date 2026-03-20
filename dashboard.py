@@ -96,19 +96,27 @@ blockquote p { color: #1a2b42; font-size: 0.92rem; line-height: 1.65; margin: 0;
     background: #eef4fb;
     border-radius: 4px;
     padding: 2px 8px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 .sec-title {
     font-size: 1.15rem;
     font-weight: 700;
     color: #0d1117;
-    margin: 0 0 3px;
+    margin: 0 0 6px 0;
+    padding: 0;
+    line-height: 1.3;
 }
 .sec-sub {
     font-size: 0.84rem;
     color: #6b7280;
-    line-height: 1.55;
-    margin-bottom: 0.9rem;
+    line-height: 1.6;
+    margin: 0 0 1.1rem 0;
+    padding: 0;
+}
+/* Prevent Streamlit's default p-tag margin from fighting custom elements */
+[data-testid="stMarkdownContainer"] .sec-title,
+[data-testid="stMarkdownContainer"] .sec-sub {
+    margin-bottom: 6px !important;
 }
 
 /* Horizontal rule */
@@ -152,10 +160,15 @@ details {
 #  Constants
 # ─────────────────────────────────────────────────────────────────────────────
 COMPANY_COLORS = {
-    "SpaceX":          "#005288",
-    "Blue Origin":     "#2d3748",
-    "Rocket Lab":      "#c0392b",
-    "Virgin Galactic": "#0077aa",
+    "SpaceX":                       "#005288",
+    "Blue Origin":                  "#2d3748",
+    "Rocket Lab":                   "#c0392b",
+    "Virgin Galactic":              "#0077aa",
+    "Maxar Technologies":           "#6b7280",
+    "Planet Labs":                  "#16a34a",
+    "Relativity Space":             "#7c3aed",
+    "Astra Space":                  "#d97706",
+    "Sierra Nevada / Sierra Space": "#0891b2",
 }
 
 FILING_TYPE_COLORS = {
@@ -217,14 +230,26 @@ LEGEND_CLEAN = dict(bgcolor="rgba(0,0,0,0)", bordercolor="rgba(0,0,0,0)", font_s
 LEGEND_H = dict(bgcolor="rgba(0,0,0,0)", orientation="h",
                 yanchor="bottom", y=1.02, xanchor="right", x=1, font_size=10)
 
-AXIS = dict(gridcolor="#f0f0f0", linecolor="#e3e6ea", tickcolor="#e3e6ea", tickfont_size=11)
+AXIS = dict(gridcolor="#f0f0f0", linecolor="#e3e6ea", tickcolor="#e3e6ea")
+
+
+def chart_height(n: int, base: int = 280, per_row: int = 16, cap: int = 560) -> int:
+    """Scale chart height with data volume, within a sensible range."""
+    return min(base + n * per_row, cap)
+
+
+def _layout(fig: go.Figure, **kwargs) -> None:
+    """Apply CHART_BASE defaults merged with chart-specific overrides."""
+    fig.update_layout(**{**CHART_BASE, **kwargs})  # type: ignore[call-arg]
 
 
 def sec(pill: str, title: str, sub: str):
     st.markdown(
-        f'<span class="sec-pill">{pill}</span>'
-        f'<p class="sec-title">{title}</p>'
-        f'<p class="sec-sub">{sub}</p>',
+        f'<div style="margin-top:0.5rem;">'
+        f'<span class="sec-pill">{pill}</span><br>'
+        f'<div class="sec-title">{title}</div>'
+        f'<div class="sec-sub">{sub}</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
@@ -255,15 +280,9 @@ df_raw, is_sample = load_data()
 with st.sidebar:
     st.markdown("### Filters")
     if is_sample:
-        st.warning(
-            "Running on illustrative sample data.  \n"
-            "To load complete live records:  \n"
-            "1. Register free at [lens.org](https://www.lens.org)  \n"
-            "2. Go to Account → Lens API → Request Access  \n"
-            "3. Run `python fetch_patents.py --token YOUR_TOKEN`"
-        )
+        st.caption("Illustrative data — run `python fetch_patents.py` to load live records")
     else:
-        st.success(f"Live data: **{len(df_raw):,}** patents")
+        st.success(f"Live: **{len(df_raw):,}** patents loaded")
 
     st.markdown("---")
     all_co = sorted(df_raw["company"].unique())
@@ -277,7 +296,7 @@ with st.sidebar:
     sel_cat = st.multiselect("Technology categories", all_cat, default=all_cat)
 
     st.markdown("---")
-    st.caption("Data: Lens.org Patent API")
+    st.caption("Data: USPTO Open Data Portal")
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  Filtered dataframe
@@ -295,25 +314,51 @@ df = df_raw[
 st.title("NewSpace Patent Analytics")
 st.markdown("""
 <blockquote><p>
-The NewSpace industry represents a growing IP opportunity. Companies like SpaceX are building
-patent portfolios focused heavily on <strong>satellite communications and RF technology</strong>
-rather than core rocketry, which they protect as trade secrets. This creates a layered IP landscape
-where prosecution strategy, freedom-to-operate analysis, and portfolio management require deep
-expertise in wireless systems, semiconductors, and signal processing — areas central to
-<strong>Perkins Coie's patent practice</strong>.
+I built this to examine how NewSpace companies structure their IP portfolios, using data from the USPTO API. The pattern that
+emerges is counterintuitive: SpaceX's granted patent activity concentrates almost entirely in
+satellite communications and RF systems, while launch vehicle technology is protected as trade
+secrets. Portfolio strategy, prosecution decisions, and FTO analysis in this space require the
+kind of technical depth and sectoral fluency that drew me to Perkins Coie.
 </p></blockquote>
 """, unsafe_allow_html=True)
+
+if is_sample:
+    st.info(
+        "Showing illustrative sample data across nine NewSpace companies. "
+        "Run `python3 fetch_patents.py` to populate with live records from the USPTO.",
+        icon="ℹ️",
+    )
 
 # KPIs
 granted = df[df["status"] == "granted"]
 sx_post19 = df[(df["company"] == "SpaceX") & (df["filing_year"] >= 2019)]["lens_id"].nunique()
+
+_yr_min = int(df["pub_year"].dropna().min()) if not df["pub_year"].dropna().empty else 0
+_yr_max = int(df["pub_year"].dropna().max()) if not df["pub_year"].dropna().empty else 0
+_top_cat = df["tech_category"].value_counts().idxmax() if not df.empty else "N/A"
 
 k1, k2, k3, k4, k5 = st.columns(5)
 k1.metric("Total Patents", f"{len(df):,}")
 k2.metric("Companies Tracked", len(df["company"].unique()))
 k3.metric("Technology Areas", df["tech_category"].nunique())
 k4.metric("SpaceX Post-2019", sx_post19, delta="Starlink era")
-k5.metric("Granted", f"{len(granted):,}", delta=f"{100*len(granted)/max(len(df),1):.0f}% grant rate")
+k5.metric("Grant Years", f"{_yr_min}-{_yr_max}", delta=_top_cat)
+
+_sx_recent = df[(df["company"] == "SpaceX") & (df["filing_year"] >= 2023)]["lens_id"].nunique()
+
+st.markdown(
+    f'<div style="background:#fff8e1;border-left:3px solid #f59e0b;border-radius:0 4px 4px 0;'
+    f'padding:0.6rem 1rem;margin:0.8rem 0 1rem;font-size:0.88rem;color:#1a2b42;line-height:1.6;">'
+    f'SpaceX filed only {_sx_recent} patents since 2023, a sharp decline from prior years. '
+    f'This reflects a deliberate shift toward trade secret protection for core technology, '
+    f'including Raptor engine design, Starship manufacturing processes, and materials science. '
+    f'For clients operating adjacent to SpaceX technology, that opacity creates sustained demand '
+    f'for FTO analysis and clearance opinions, precisely because portfolio boundaries are '
+    f'difficult to map from the public record alone. It is also an opportunity for third parties '
+    f'to entrench themselves against competitors, even where SpaceX holds prior use rights.'
+    f'</div>',
+    unsafe_allow_html=True,
+)
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -323,11 +368,11 @@ st.markdown("<hr>", unsafe_allow_html=True)
 sec(
     "Section 1",
     "Patent Family Prosecution History",
-    "A patent family captures every filing tied to a single invention: the priority application, "
-    "US continuations and divisionals, an international PCT filing, and national-phase entries in "
-    "each target jurisdiction. Mapping and managing these relationships is a core service at firms "
-    "like Perkins Coie. Select a family below to explore the full prosecution history, then hover "
-    "any node for filing details and click the source links in the table to open the original record.",
+    "A patent family encompasses every filing derived from a common priority: domestic "
+    "continuations, divisionals, PCT applications, and national phase entries across key "
+    "jurisdictions. I selected these families to illustrate the scope of prosecution "
+    "management that firms like Perkins Coie coordinate on behalf of clients in this sector. "
+    "Hover any node for filing details, or follow the table links to the source record.",
 )
 
 from seed_data import get_all_families
@@ -339,14 +384,17 @@ sel_family_label = st.selectbox(
     label_visibility="collapsed",
 )
 family_data = all_families[sel_family_label]
-is_bo_vtol = "VTOL" in sel_family_label
+_label_str = sel_family_label or ""
+is_ipr_family = any(kw in _label_str for kw in ("IPR", "VTOL", "Challenge"))
 
-if is_bo_vtol:
+if is_ipr_family:
     st.markdown(
-        '<p class="ipr-note"><strong>Competitive dynamics:</strong> SpaceX filed '
-        'IPR2015-01765 at the PTAB challenging Blue Origin\'s US8678321B2 reusable landing '
-        'claims. The PTAB denied institution in April 2016. This case illustrates how patent '
-        'prosecution intersects with competitive strategy in the NewSpace industry.</p>',
+        '<p class="ipr-note">SpaceX filed IPR2015-01765 at the PTAB challenging Blue Origin\'s '
+        'US8678321B2 reusable vertical landing claims. The PTAB denied institution in April 2016, '
+        'finding SpaceX had not demonstrated a reasonable likelihood of prevailing on any '
+        'challenged claim. The proceeding illustrates how inter partes review functions as a '
+        'competitive tool in capital-intensive industries where rival firms hold overlapping '
+        'technical positions.</p>',
         unsafe_allow_html=True,
     )
 
@@ -356,7 +404,7 @@ node_pos = {}
 for rec in family_data:
     tier = TIER_Y.get(rec["filing_type"], 0)
     key = (rec["filing_year"], tier)
-    offset = pos_counter[key] * 0.5
+    offset = pos_counter[key] * 1.0   # wider spacing to prevent label collisions
     pos_counter[key] += 1
     node_pos[rec["node_id"]] = (rec["filing_year"] + offset, tier)
 
@@ -418,27 +466,40 @@ for ftype, recs in type_groups.items():
             f"{r['abstract'][:180]}..."
         )
 
-    labels = []
-    for r in recs:
-        # Short label: strip kind codes, keep just the number
-        short = (r["pub_number"]
-                 .replace("B2", "").replace("B1", "").replace("A1", "").replace("A2", "")
-                 .strip())
-        if "IPR" in short:
-            short = "IPR\n2015-01765"
-        labels.append(short)
-
     traces.append(go.Scatter(
         x=xs, y=ys,
-        mode="markers+text",
+        mode="markers",
         marker=dict(symbol=syms, color=col, size=sz, line=dict(color="#ffffff", width=2)),
-        text=labels,
-        textposition="top center",
-        textfont=dict(size=8.5, color="#2c3e50"),
         customdata=hover_texts,
         hovertemplate="%{customdata}<extra></extra>",
         name=ftype,
         legendgroup=ftype,
+    ))
+
+# ── Node label annotations (alternating above/below to prevent overlap) ───────
+label_annots = []
+for i, rec in enumerate(family_data):
+    x, y = node_pos[rec["node_id"]]
+    short = (rec["pub_number"]
+             .replace("B2", "").replace("B1", "").replace("A1", "").replace("A2", "")
+             .strip())
+    if short.startswith("US"):
+        short = short[2:]          # drop "US" prefix — saves ~30% label width
+    if "IPR" in rec["pub_number"]:
+        short = "IPR\n01765"
+    # Size-aware yshift: priority nodes are bigger so need more clearance
+    is_priority = rec["filing_type"] == "Priority Application"
+    shift_px = 30 if is_priority else 14
+    above = (i % 2 == 0)
+    label_annots.append(dict(
+        x=x, y=y,
+        text=short,
+        yshift=shift_px if above else -shift_px,
+        xanchor="center",
+        yanchor="bottom" if above else "top",
+        font=dict(size=7.5, color="#2c3e50"),
+        showarrow=False,
+        bgcolor="rgba(247,248,250,0.75)",
     ))
 
 # ── Tier band annotations ─────────────────────────────────────────────────────
@@ -464,31 +525,25 @@ for tier in active_tiers:
         line_width=0,
     )
 
-fam_layout = {
-    **CHART_BASE,
-    "plot_bgcolor": "#ffffff",
-    "height": 560,
-    "xaxis": dict(title="Filing Year", tickmode="linear", dtick=1,
-                  range=[x_min, x_max], **AXIS),
-    "yaxis": dict(showticklabels=False, range=[-0.6, 5.7],
-                  gridcolor="#f0f4f8", zeroline=False),
-    "legend": dict(title="Filing Type", bgcolor="rgba(255,255,255,0.92)",
-                   bordercolor="#e3e6ea", borderwidth=1, font_size=10),
-    "annotations": tier_annots + edge_annots,
-    "margin": dict(l=90, r=16, t=44, b=36),
-    "hovermode": "closest",
-    "title": dict(
-        text=(
-            "Prosecution History: SpaceX Starlink Phased-Array Antenna Family"
-            if not is_bo_vtol else
-            "Prosecution History: Blue Origin VTOL Landing Family (with SpaceX IPR)"
-        ),
-        font_size=13, x=0,
-    ),
-}
-fig_fam.update_layout(**fam_layout)
+_fam_title = "Prosecution History: " + (
+    _label_str.split("|")[1].strip() if "|" in _label_str else _label_str
+)
+_layout(fig_fam,
+    plot_bgcolor="#ffffff",
+    height=560,
+    xaxis=dict(title="Filing Year", tickmode="linear", dtick=1,
+               range=[x_min, x_max], **AXIS),
+    yaxis=dict(showticklabels=False, range=[-0.6, 5.7],
+               gridcolor="#f0f4f8", zeroline=False),
+    legend=dict(title="Filing Type", bgcolor="rgba(255,255,255,0.92)",
+                bordercolor="#e3e6ea", borderwidth=1, font_size=10),
+    annotations=tier_annots + edge_annots + label_annots,
+    margin=dict(l=90, r=16, t=44, b=36),
+    hovermode="closest",
+    title=dict(text=_fam_title, font_size=13, x=0),
+)
 
-st.plotly_chart(fig_fam, use_container_width=True)
+st.plotly_chart(fig_fam, width="stretch")
 
 # ── Summary KPIs + table with source links ────────────────────────────────────
 fam_df = pd.DataFrame(family_data)
@@ -522,7 +577,7 @@ fam_display = fam_display.sort_values("filing_date").rename(columns={
 
 st.dataframe(
     fam_display,
-    use_container_width=True,
+    width="stretch",
     hide_index=True,
     column_config={
         "Google Patents": st.column_config.LinkColumn(
@@ -542,9 +597,10 @@ st.markdown("<hr>", unsafe_allow_html=True)
 sec(
     "Section 2",
     "Filing Timeline",
-    "Annual patent filings reveal a near-dormant SpaceX portfolio through 2015, followed by "
-    "sustained growth driven almost entirely by Starlink communications technology rather than "
-    "launch vehicle innovation.",
+    "SpaceX's filing activity was negligible before 2016. The volume that followed correlates "
+    "directly with Starlink development, and CPC classification confirms it is concentrated in "
+    "communications technology rather than launch systems. The divergence between public identity "
+    "and actual portfolio composition is the defining IP strategy question in NewSpace.",
 )
 
 tl = df.groupby(["filing_year", "company"])["lens_id"].count().reset_index(name="count")
@@ -555,11 +611,12 @@ fig_tl = px.bar(
     labels={"filing_year": "Filing Year", "count": "Patents Filed", "company": ""},
     title="Annual Patent Filings by Company",
 )
-fig_tl.update_layout(**CHART_BASE, height=360,
-                     xaxis=dict(tickmode="linear", dtick=1, tickangle=-45, **AXIS),
-                     legend=LEGEND_H)
-fig_tl.update_yaxes(**AXIS)
-st.plotly_chart(fig_tl, use_container_width=True)
+_tl_h = chart_height(tl["filing_year"].nunique(), base=320, per_row=4, cap=460)
+_layout(fig_tl, height=_tl_h,
+        xaxis=dict(tickmode="linear", dtick=1, tickangle=-45, automargin=True, **AXIS),
+        yaxis=dict(**AXIS), legend=LEGEND_H,
+        margin=dict(l=8, r=8, t=64, b=44))
+st.plotly_chart(fig_tl, width="stretch")
 
 ca1, ca2 = st.columns(2)
 with ca1:
@@ -570,10 +627,14 @@ with ca1:
         title="SpaceX: Technology Area Over Time",
         labels={"filing_year": "Year", "n": "Filings", "tech_category": ""},
     )
-    fig_sx.update_layout(**CHART_BASE, height=310, legend=LEGEND_H)
-    fig_sx.update_xaxes(tickangle=-45, **AXIS)
-    fig_sx.update_yaxes(**AXIS)
-    st.plotly_chart(fig_sx, use_container_width=True)
+    _layout(fig_sx, height=310,
+            legend=dict(bgcolor="rgba(255,255,255,0.88)", bordercolor="#e3e6ea",
+                        borderwidth=1, font_size=8, x=0.01, y=0.99,
+                        xanchor="left", yanchor="top"),
+            xaxis=dict(tickangle=-45, automargin=True, **AXIS),
+            yaxis=dict(**AXIS),
+            margin=dict(l=8, r=8, t=46, b=44))
+    st.plotly_chart(fig_sx, width="stretch")
 
 with ca2:
     cum = (df.groupby(["filing_year", "company"])["lens_id"]
@@ -585,10 +646,13 @@ with ca2:
         title="Cumulative Portfolio Growth",
         labels={"filing_year": "Year", "cumulative": "Total Patents", "company": ""},
     )
-    fig_cum.update_layout(**CHART_BASE, height=310, legend=LEGEND_H)
-    fig_cum.update_xaxes(tickangle=-45, **AXIS)
-    fig_cum.update_yaxes(**AXIS)
-    st.plotly_chart(fig_cum, use_container_width=True)
+    _layout(fig_cum, height=310,
+            legend=dict(bgcolor="rgba(255,255,255,0.88)", bordercolor="#e3e6ea",
+                        borderwidth=1, font_size=8, x=0.01, y=0.99,
+                        xanchor="left", yanchor="top"),
+            xaxis=dict(tickangle=-45, **AXIS), yaxis=dict(**AXIS),
+            margin=dict(l=8, r=8, t=46, b=44))
+    st.plotly_chart(fig_cum, width="stretch")
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -598,10 +662,11 @@ st.markdown("<hr>", unsafe_allow_html=True)
 sec(
     "Section 3",
     "Technology Breakdown",
-    "CPC classification analysis shows SpaceX's portfolio concentrated in antenna design, "
-    "satellite communications, and signal processing — the three pillars of the Starlink ground "
-    "terminal. Propulsion and launch systems, the areas most publicly associated with SpaceX, "
-    "represent a small fraction of its patent activity.",
+    "Computing, software, and satellite communications account for the majority of granted "
+    "patents across this sector. Propulsion represents a small fraction despite being the most "
+    "visible aspect of SpaceX's operations, consistent with a deliberate trade-secret posture "
+    "for launch vehicle technology. That choice concentrates prosecution and enforcement activity "
+    "on the communications and software portfolio.",
 )
 
 cb1, cb2 = st.columns([1.1, 0.9])
@@ -615,9 +680,12 @@ with cb1:
     fig_tm.update_traces(
         textinfo="label+value",
         hovertemplate="<b>%{label}</b><br>%{value} patents<extra></extra>",
+        textfont=dict(size=13),
+        marker=dict(line=dict(width=0.8, color="#333333")),
     )
-    fig_tm.update_layout(**CHART_BASE, height=460, margin=dict(l=4, r=4, t=38, b=4))
-    st.plotly_chart(fig_tm, use_container_width=True)
+    fig_tm.update_layout(uniformtext=dict(minsize=8, mode="hide"))
+    _layout(fig_tm, height=460, margin=dict(l=4, r=4, t=52, b=4))
+    st.plotly_chart(fig_tm, width="stretch")
 
 with cb2:
     sx_tech = (df[df["company"] == "SpaceX"]
@@ -631,12 +699,11 @@ with cb2:
         labels={"n": "Patents", "cat_short": ""},
         color="n", color_continuous_scale="Blues",
     )
-    fig_sb.update_layout(**CHART_BASE, height=460, showlegend=False,
-                         coloraxis_showscale=False,
-                         margin=dict(l=160, r=8, t=38, b=8))
-    fig_sb.update_xaxes(**AXIS)
-    fig_sb.update_yaxes(tickfont_size=11, **{k: v for k, v in AXIS.items() if k != "tickfont_size"})
-    st.plotly_chart(fig_sb, use_container_width=True)
+    _sb_h = chart_height(len(sx_tech), base=320, per_row=28, cap=560)
+    _layout(fig_sb, height=_sb_h, showlegend=False, coloraxis_showscale=False,
+            xaxis=dict(**AXIS), yaxis=dict(**AXIS),
+            margin=dict(l=160, r=8, t=52, b=8))
+    st.plotly_chart(fig_sb, width="stretch")
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -646,10 +713,11 @@ st.markdown("<hr>", unsafe_allow_html=True)
 sec(
     "Section 4",
     "Competitor Landscape",
-    "The four leading commercial space companies pursue fundamentally different IP strategies. "
-    "Blue Origin concentrates on propulsion and launch system patents; SpaceX concentrates on "
-    "communications infrastructure. Rocket Lab and Virgin Galactic maintain smaller, focused "
-    "portfolios aligned with their respective market positions.",
+    "Each company reflects a distinct IP posture. SpaceX concentrates in communications "
+    "infrastructure, Blue Origin in propulsion systems, and Maxar reflects the deeper patent "
+    "culture of the established Earth observation sector. Rocket Lab, Relativity, and Sierra "
+    "Space represent the more dynamic prosecution and FTO opportunity as their portfolios "
+    "mature and their technology positions become commercially contested.",
 )
 
 cc1, cc2 = st.columns(2)
@@ -662,47 +730,59 @@ with cc1:
         title="Patent Volume by Company",
         labels={"n": "Total Patents", "company": ""},
     )
-    fig_vol.update_layout(**CHART_BASE, showlegend=False, height=280,
-                          margin=dict(l=100, r=8, t=38, b=8))
-    fig_vol.update_xaxes(**AXIS)
-    fig_vol.update_yaxes(**AXIS)
-    st.plotly_chart(fig_vol, use_container_width=True)
+    _vol_h = chart_height(len(vol), base=220, per_row=32, cap=480)
+    _layout(fig_vol, showlegend=False, height=_vol_h,
+            xaxis=dict(**AXIS), yaxis=dict(**AXIS),
+            margin=dict(l=120, r=8, t=52, b=8))
+    st.plotly_chart(fig_vol, width="stretch")
 
 with cc2:
     mix = df.groupby(["company", "tech_category"])["lens_id"].count().reset_index(name="n")
     tot = mix.groupby("company")["n"].sum().reset_index(name="total")
     mix = mix.merge(tot, on="company")
     mix["pct"] = 100 * mix["n"] / mix["total"]
-    # Shorten category labels
     mix["cat_short"] = mix["tech_category"].str.replace(" / ", "/")
+    # Shorten long company names for axis legibility
+    _co_short = {
+        "Sierra Nevada / Sierra Space": "Sierra Space",
+        "Maxar Technologies": "Maxar",
+        "Virgin Galactic": "Virgin Gal.",
+        "Relativity Space": "Relativity",
+    }
+    mix["co_short"] = mix["company"].replace(_co_short)
     fig_mix = px.bar(
-        mix, x="company", y="pct", color="cat_short",
+        mix, x="co_short", y="pct", color="cat_short",
         title="Technology Mix (% of Portfolio)",
-        labels={"pct": "Portfolio Share (%)", "company": "", "cat_short": "Category"},
+        labels={"pct": "Share (%)", "co_short": "", "cat_short": "Category"},
     )
-    fig_mix.update_layout(**CHART_BASE, barmode="stack", height=280,
-                          legend=LEGEND_CLEAN)
-    fig_mix.update_xaxes(**AXIS)
-    fig_mix.update_yaxes(range=[0, 100], **AXIS)
-    st.plotly_chart(fig_mix, use_container_width=True)
+    _layout(fig_mix, barmode="stack", height=300, legend=LEGEND_CLEAN,
+            xaxis=dict(tickangle=-35, automargin=True, **AXIS),
+            yaxis=dict(range=[0, 100], **AXIS),
+            margin=dict(l=8, r=8, t=52, b=52))
+    st.plotly_chart(fig_mix, width="stretch")
 
 # Jurisdiction + radar in a 2-col row
 cd1, cd2 = st.columns([1, 1.3])
 
 with cd1:
-    valid_jur = ["US", "WO", "EP", "CN", "JP", "KR", "AU", "CA", "GB"]
-    jur = (df[df["jurisdiction"].isin(valid_jur)]
-           .groupby(["company", "jurisdiction"])["lens_id"].count().reset_index(name="n"))
-    fig_jur = px.bar(
-        jur, x="jurisdiction", y="n", color="company", barmode="group",
-        color_discrete_map=COMPANY_COLORS,
-        title="Filing Jurisdiction",
-        labels={"n": "Filings", "jurisdiction": "", "company": ""},
+    from collections import Counter
+    _cpc_counts: Counter = Counter()
+    for _row_codes in df["cpc_codes"].dropna():
+        for _c in str(_row_codes).split("|"):
+            _c = _c.strip()
+            if _c:
+                _cpc_counts[_c[:8]] += 1
+    _top_cpc = pd.DataFrame(_cpc_counts.most_common(14), columns=["cpc", "count"])
+    fig_cpc = px.bar(
+        _top_cpc, x="count", y="cpc", orientation="h",
+        title="Top CPC Subclasses Across Portfolio",
+        labels={"count": "Patents", "cpc": ""},
+        color="count", color_continuous_scale="Blues",
     )
-    fig_jur.update_layout(**CHART_BASE, height=340, legend=LEGEND_H)
-    fig_jur.update_xaxes(**AXIS)
-    fig_jur.update_yaxes(**AXIS)
-    st.plotly_chart(fig_jur, use_container_width=True)
+    _layout(fig_cpc, height=340, showlegend=False, coloraxis_showscale=False,
+            xaxis=dict(**AXIS), yaxis=dict(autorange="reversed", **AXIS),
+            margin=dict(l=110, r=8, t=52, b=8))
+    st.plotly_chart(fig_cpc, width="stretch")
 
 with cd2:
     radar_cats = [
@@ -749,7 +829,7 @@ with cd2:
         height=340,
         margin=dict(l=50, r=50, t=44, b=20),
     )
-    st.plotly_chart(fig_rad, use_container_width=True)
+    st.plotly_chart(fig_rad, width="stretch")
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -759,6 +839,8 @@ st.markdown("<hr>", unsafe_allow_html=True)
 with st.expander("Full Dataset", expanded=False):
     show_cols = ["company", "pub_number", "title", "filing_year",
                  "status", "tech_category", "jurisdiction", "assignee"]
+    if "cited_by_count" in df.columns:
+        show_cols.append("cited_by_count")
     disp = df[show_cols].sort_values(["company", "filing_year"],
                                      ascending=[True, False]).copy()
     disp["source"] = disp["pub_number"].apply(
@@ -766,11 +848,12 @@ with st.expander("Full Dataset", expanded=False):
     )
     st.dataframe(
         disp,
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "source": st.column_config.LinkColumn("Google Patents", display_text="View"),
             "title": st.column_config.TextColumn("Title", width="large"),
+            "cited_by_count": st.column_config.NumberColumn("Citations", width="small"),
         },
     )
     st.download_button(
@@ -785,9 +868,8 @@ with st.expander("Full Dataset", expanded=False):
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown(
     '<p class="footer">'
-    'Data: Lens.org Patent API &nbsp;|&nbsp; '
+    'Data: USPTO API &nbsp;|&nbsp; '
     'Perkins Coie NewSpace Practice &nbsp;|&nbsp; '
-    'Patent data is illustrative; verify against official sources before reliance.'
     '</p>',
     unsafe_allow_html=True,
 )
