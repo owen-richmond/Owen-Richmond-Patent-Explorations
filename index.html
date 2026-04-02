@@ -3,741 +3,828 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Owen Richmond — Patent Portfolio</title>
+  <title>Owen Sagan Richmond — Patent Portfolio</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0d1117;
-      --surface:   #161b22;
-      --border:    #30363d;
-      --accent:    #58a6ff;
-      --accent2:   #3fb950;
-      --accent3:   #d2a8ff;
-      --accent4:   #ffa657;
-      --muted:     #8b949e;
-      --text:      #e6edf3;
-      --text-dim:  #c9d1d9;
-      --radius:    10px;
+      --cream:      #faf8f4;
+      --white:      #ffffff;
+      --navy:       #1a2c4e;
+      --navy-light: #2c4470;
+      --blue-mid:   #3d5a8a;
+      --rule:       #c8c0b4;
+      --rule-light: #e4dfd7;
+      --text:       #1c1c1c;
+      --text-mid:   #3a3a3a;
+      --text-muted: #6b6560;
+      --stamp:      #8b1a1a;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
+      background: var(--cream);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    /* ── Layout ── */
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ── Hero ── */
-    .hero {
-      padding: 80px 0 56px;
-      border-bottom: 1px solid var(--border);
-    }
-    .hero-eyebrow {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 18px;
-    }
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      line-height: 1.15;
-      margin-bottom: 20px;
-    }
-    .hero h1 span { color: var(--accent); }
-    .hero-desc {
-      font-size: 1.05rem;
-      color: var(--text-dim);
-      max-width: 620px;
+      font-family: Georgia, "Times New Roman", Times, serif;
       line-height: 1.7;
     }
-    .hero-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-top: 32px;
-    }
-    .hero-stat {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .hero-stat-value {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-    }
-    .hero-stat-label {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-    .hero-stat-divider {
-      width: 1px;
-      background: var(--border);
-      align-self: stretch;
+
+    /* ── Top rule bar ── */
+    .top-bar {
+      background: var(--navy);
+      height: 5px;
     }
 
-    /* ── Section label ── */
-    .section {
-      padding: 56px 0 0;
+    /* ── Header ── */
+    header {
+      background: var(--white);
+      border-bottom: 2px solid var(--rule);
+      padding: 40px 0 32px;
     }
-    .section-label {
-      font-size: 0.72rem;
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    .header-kicker {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .header-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      max-width: 580px;
+      font-style: italic;
+    }
+    .header-meta {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--rule-light);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .meta-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--navy);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+    .meta-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.67rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    /* ── Main layout ── */
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 32px 80px;
+    }
+
+    /* ── Section ── */
+    .section {
+      margin-top: 52px;
+    }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .section-rule-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--navy);
+      white-space: nowrap;
+    }
+    .section-rule-line {
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+    .section h2 {
+      font-size: 1.35rem;
+      color: var(--navy);
+      font-weight: 700;
       margin-bottom: 10px;
     }
-    .section-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
+    .section-intro {
+      font-size: 0.95rem;
+      color: var(--text-mid);
+      max-width: 680px;
+      margin-bottom: 28px;
+      line-height: 1.75;
     }
-    .section-desc {
-      font-size: 0.9rem;
-      color: var(--muted);
-      max-width: 580px;
-      line-height: 1.65;
-      margin-bottom: 36px;
+
+    /* ── Overview box ── */
+    .overview-box {
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--navy);
+      padding: 24px 28px;
+      margin-bottom: 28px;
     }
+    .overview-box p {
+      font-size: 0.95rem;
+      color: var(--text-mid);
+      line-height: 1.8;
+    }
+    .overview-box p + p { margin-top: 12px; }
 
     /* ── Timeline ── */
     .timeline {
       position: relative;
-      padding-left: 28px;
     }
-    .timeline::before {
-      content: "";
+    .timeline-spine {
       position: absolute;
-      left: 6px;
-      top: 8px;
+      left: 112px;
+      top: 0;
       bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom, var(--accent), var(--accent3), transparent);
-      opacity: 0.4;
+      width: 1px;
+      background: var(--rule);
     }
 
-    .timeline-item {
+    .tl-item {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 0 24px;
+      margin-bottom: 0;
       position: relative;
-      margin-bottom: 40px;
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.45s ease, transform 0.45s ease;
     }
-    .timeline-item.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .tl-item + .tl-item .tl-card {
+      border-top: none;
     }
 
-    .timeline-dot {
+    .tl-date-col {
+      text-align: right;
+      padding: 28px 0 0;
+    }
+    .tl-year {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .tl-month {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 3px;
+    }
+    .tl-dot-col {
       position: absolute;
-      left: -25px;
-      top: 6px;
-      width: 12px;
-      height: 12px;
+      left: 108px;
+      top: 34px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
-      border: 2px solid var(--bg);
-      background: var(--accent);
+      background: var(--navy);
+      border: 2px solid var(--cream);
+      z-index: 1;
     }
 
-    .patent-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px 26px;
-      transition: border-color 0.2s;
+    .tl-card {
+      background: var(--white);
+      border: 1px solid var(--rule);
+      padding: 24px 26px 26px;
+      margin-left: 16px;
     }
-    .patent-card:hover { border-color: var(--accent); }
 
-    .patent-card-header {
+    .tl-card-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 14px;
       flex-wrap: wrap;
+      margin-bottom: 8px;
     }
-    .patent-number {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--accent);
-      background: rgba(88, 166, 255, 0.1);
-      border: 1px solid rgba(88, 166, 255, 0.25);
-      border-radius: 5px;
-      padding: 3px 9px;
-      white-space: nowrap;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    .patent-number:hover { background: rgba(88, 166, 255, 0.2); }
-
-    .patent-dates {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-    .patent-date {
-      font-size: 0.74rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .patent-date-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .date-filed  .patent-date-dot { background: var(--muted); }
-    .date-grant  .patent-date-dot { background: var(--accent2); }
-
-    .patent-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 10px;
-      line-height: 1.35;
-    }
-
-    .patent-desc {
-      font-size: 0.875rem;
-      color: var(--text-dim);
-      line-height: 1.7;
-      margin-bottom: 16px;
-    }
-
-    .patent-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-    }
-    .tag {
-      font-size: 0.7rem;
-      font-weight: 500;
-      padding: 3px 9px;
-      border-radius: 20px;
-      border: 1px solid;
-    }
-    .tag-blue   { color: var(--accent);  border-color: rgba(88,166,255,0.3);  background: rgba(88,166,255,0.08); }
-    .tag-green  { color: var(--accent2); border-color: rgba(63,185,80,0.3);   background: rgba(63,185,80,0.08); }
-    .tag-purple { color: var(--accent3); border-color: rgba(210,168,255,0.3); background: rgba(210,168,255,0.08); }
-    .tag-orange { color: var(--accent4); border-color: rgba(255,166,87,0.3);  background: rgba(255,166,87,0.08); }
-
-    /* Status badge */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 3px 9px;
-      border-radius: 20px;
-    }
-    .status-granted {
-      background: rgba(63,185,80,0.12);
-      color: var(--accent2);
-      border: 1px solid rgba(63,185,80,0.3);
-    }
-    .status-pending {
-      background: rgba(255,166,87,0.12);
-      color: var(--accent4);
-      border: 1px solid rgba(255,166,87,0.3);
-    }
-    .status-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    /* ── Family map ── */
-    .family-map {
-      margin-top: 36px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 24px 20px;
-    }
-    .family-map-title {
-      font-size: 0.78rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-    .family-row {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      overflow-x: auto;
-      padding-bottom: 8px;
-    }
-    .family-node {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 130px;
-    }
-    .family-node-box {
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 14px;
-      text-align: center;
-      transition: border-color 0.2s;
-      cursor: default;
-      width: 120px;
-    }
-    .family-node-box:hover { border-color: var(--accent); }
-    .family-node-year {
-      font-size: 0.65rem;
-      color: var(--muted);
-      margin-bottom: 3px;
-    }
-    .family-node-num {
-      font-size: 0.68rem;
+    .tl-patent-num {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.72rem;
       font-weight: 700;
-      color: var(--accent);
-      font-family: monospace;
+      letter-spacing: 0.05em;
+      color: var(--navy-light);
+      text-decoration: none;
     }
-    .family-node-label {
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      margin-top: 3px;
+    .tl-patent-num:hover { text-decoration: underline; }
+
+    .granted-stamp {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #2e6b3e;
+      border: 1px solid #a3c9af;
+      background: #f0f7f2;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+
+    .tl-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
       line-height: 1.3;
     }
-    .family-arrow {
-      font-size: 1rem;
-      color: var(--border);
-      margin: 0 2px;
-      flex-shrink: 0;
-    }
 
-    /* ── CPC section ── */
-    .cpc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 14px;
-      margin-top: 20px;
+    .tl-body {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      line-height: 1.8;
     }
-    .cpc-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px 18px;
-    }
-    .cpc-code {
-      font-family: monospace;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--accent3);
-      margin-bottom: 5px;
-    }
-    .cpc-desc {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      line-height: 1.5;
-    }
+    .tl-body p + p { margin-top: 10px; }
 
-    /* ── Inventors ── */
-    .inventors-list {
+    .tl-dates-row {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--rule-light);
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
+      gap: 20px;
     }
-    .inventor-chip {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 5px 13px;
+    .tl-date-item {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-muted);
     }
-    .inventor-chip.highlight {
-      color: var(--accent);
-      border-color: rgba(88,166,255,0.35);
-      background: rgba(88,166,255,0.08);
+    .tl-date-item strong {
+      color: var(--text);
       font-weight: 600;
+    }
+
+    .cpc-pills {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .cpc-pill {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.67rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--blue-mid);
+      background: #eef2f8;
+      border: 1px solid #c5d0e4;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+
+    /* ── Family progression ── */
+    .progression {
+      background: var(--white);
+      border: 1px solid var(--rule);
+      padding: 24px 26px;
+    }
+    .progression-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .prog-node {
+      flex: 1;
+      min-width: 140px;
+      padding: 14px 16px;
+      border-right: 1px solid var(--rule-light);
+      position: relative;
+    }
+    .prog-node:last-child { border-right: none; }
+    .prog-num {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .prog-dates {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .prog-label {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      line-height: 1.4;
+    }
+    .prog-type {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ── CPC table ── */
+    .cpc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      background: var(--white);
+    }
+    .cpc-table th {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--rule);
+      background: #f5f2ee;
+    }
+    .cpc-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--rule-light);
+      vertical-align: top;
+      color: var(--text-mid);
+      line-height: 1.6;
+    }
+    .cpc-table td:first-child {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--navy-light);
+      white-space: nowrap;
+    }
+    .cpc-table tr:last-child td { border-bottom: none; }
+
+    /* ── Inventors ── */
+    .inventor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--rule-light);
+      border: 1px solid var(--rule);
+    }
+    .inventor-cell {
+      background: var(--white);
+      padding: 14px 18px;
+      font-size: 0.875rem;
+      color: var(--text-mid);
+    }
+    .inventor-cell.primary {
+      background: #f2f5fb;
+      font-weight: 700;
+      color: var(--navy);
     }
 
     /* ── Footer ── */
     footer {
-      margin-top: 80px;
-      padding: 28px 0;
-      border-top: 1px solid var(--border);
-      font-size: 0.78rem;
-      color: var(--muted);
+      background: var(--white);
+      border-top: 2px solid var(--rule);
+      margin-top: 60px;
+      padding: 24px 32px;
+    }
+    .footer-inner {
+      max-width: 860px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-muted);
     }
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+    footer a { color: var(--navy-light); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 
-<div class="container">
+<div class="top-bar"></div>
 
-  <!-- ── Hero ── -->
-  <section class="hero">
-    <p class="hero-eyebrow">Patent Portfolio</p>
-    <h1>Owen <span>Sagan</span> Richmond</h1>
-    <p class="hero-desc">
-      I have four US patents in adaptive display technology — systems where
-      images change in response to a viewer's gaze, voice, or facial appearance.
-      The work started as a family project and grew into a cohesive portfolio
-      covering three distinct input modalities.
+<!-- ── Header ── -->
+<header>
+  <div class="header-inner">
+    <p class="header-kicker">US Patent Portfolio</p>
+    <h1>Owen Sagan Richmond</h1>
+    <p class="header-subtitle">
+      Four granted United States patents in adaptive display systems,
+      filed between 2016 and 2022.
     </p>
-    <div class="hero-meta">
-      <div class="hero-stat">
-        <span class="hero-stat-value">4</span>
-        <span class="hero-stat-label">Granted US Patents</span>
+    <div class="header-meta">
+      <div class="meta-item">
+        <span class="meta-value">4</span>
+        <span class="meta-label">Granted Patents</span>
       </div>
-      <div class="hero-stat-divider"></div>
-      <div class="hero-stat">
-        <span class="hero-stat-value">2016</span>
-        <span class="hero-stat-label">First Filing</span>
+      <div class="meta-item">
+        <span class="meta-value">2016 to 2023</span>
+        <span class="meta-label">Filing to Most Recent Grant</span>
       </div>
-      <div class="hero-stat-divider"></div>
-      <div class="hero-stat">
-        <span class="hero-stat-value">3</span>
-        <span class="hero-stat-label">Input Modalities</span>
+      <div class="meta-item">
+        <span class="meta-value">G06F 3</span>
+        <span class="meta-label">Primary CPC Subclass</span>
       </div>
-      <div class="hero-stat-divider"></div>
-      <div class="hero-stat">
-        <span class="hero-stat-value">G06F</span>
-        <span class="hero-stat-label">Primary CPC Class</span>
+      <div class="meta-item">
+        <span class="meta-value">3</span>
+        <span class="meta-label">Distinct Input Modalities</span>
       </div>
     </div>
-  </section>
+  </div>
+</header>
 
-  <!-- ── Patent Family Map ── -->
-  <section class="section">
-    <p class="section-label">Family Overview</p>
-    <h2 class="section-title">A connected body of work</h2>
-    <p class="section-desc">
-      Each patent builds on the prior one. The original gaze-based invention
-      was extended through a continuation, then the core concept was applied to
-      two new input channels: voice and facial appearance.
+<!-- ── Page body ── -->
+<div class="page">
+
+  <!-- Overview -->
+  <div class="section">
+    <div class="section-rule">
+      <span class="section-rule-label">Overview</span>
+      <div class="section-rule-line"></div>
+    </div>
+
+    <div class="overview-box">
+      <p>
+        These four patents cover a family of inventions in which a display system
+        observes something about a viewer and changes the image shown in response.
+        The input channel varies across the patents: gaze direction, voice, and
+        facial appearance each serve as the triggering condition for image updates.
+        The claims address both the detection logic and the image-modification system
+        that acts on it.
+      </p>
+      <p>
+        The first patent was filed in March 2016. The family expanded through
+        a continuation and two new applications, each targeting a distinct modality.
+        All four were examined and allowed at the USPTO under Class G06F 3, which
+        covers input interfaces between humans and computers, specifically the
+        detection of eye movements, gestures, and related physiological signals.
+      </p>
+      <p>
+        I was a co-inventor on all four, alongside my father, brothers, and two
+        collaborators. The work grew out of a shared interest in how physical spaces
+        and the people in them can interact with one another through a display as
+        the intermediary.
+      </p>
+    </div>
+  </div>
+
+  <!-- Patent Family Progression -->
+  <div class="section">
+    <div class="section-rule">
+      <span class="section-rule-label">Patent Family</span>
+      <div class="section-rule-line"></div>
+    </div>
+    <h2>Family Progression</h2>
+    <p class="section-intro">
+      The four patents share a common inventive concept but are legally independent
+      grants, each with its own prosecution history and claim set. The continuation
+      relationship between the first two patents means they share a priority date;
+      the later applications are distinct filings.
     </p>
-    <div class="family-map">
-      <p class="family-map-title">Patent family lineage</p>
-      <div class="family-row">
-        <div class="family-node">
-          <div class="family-node-box">
-            <div class="family-node-year">2016 / 2018</div>
-            <div class="family-node-num">9,990,035</div>
-            <div class="family-node-label">Gaze-Based<br>Image Changes</div>
-          </div>
+    <div class="progression">
+      <div class="progression-row">
+        <div class="prog-node">
+          <div class="prog-num">US 9,990,035</div>
+          <div class="prog-dates">Filed Mar 2016 / Granted Jun 2018</div>
+          <div class="prog-label">Image Changes Based on Viewer's Gaze</div>
+          <div class="prog-type">Original Application</div>
         </div>
-        <div class="family-arrow">→</div>
-        <div class="family-node">
-          <div class="family-node-box">
-            <div class="family-node-year">2018 / 2019</div>
-            <div class="family-node-num">10,416,765</div>
-            <div class="family-node-label">Gaze-Based<br>(Continuation)</div>
-          </div>
+        <div class="prog-node">
+          <div class="prog-num">US 10,416,765</div>
+          <div class="prog-dates">Filed Jun 2018 / Granted Sep 2019</div>
+          <div class="prog-label">Image Changes Based on Viewer's Gaze</div>
+          <div class="prog-type">Continuation</div>
         </div>
-        <div class="family-arrow">→</div>
-        <div class="family-node">
-          <div class="family-node-box">
-            <div class="family-node-year">2019 / 2021</div>
-            <div class="family-node-num">11,016,563</div>
-            <div class="family-node-label">Voice-Based<br>Image Changes</div>
-          </div>
+        <div class="prog-node">
+          <div class="prog-num">US 11,016,563</div>
+          <div class="prog-dates">Filed Sep 2019 / Granted May 2021</div>
+          <div class="prog-label">Image Changes Based on Voice</div>
+          <div class="prog-type">New Application</div>
         </div>
-        <div class="family-arrow">→</div>
-        <div class="family-node">
-          <div class="family-node-box">
-            <div class="family-node-year">2022 / 2023</div>
-            <div class="family-node-num">11,782,507</div>
-            <div class="family-node-label">Facial Appearance<br>Image Changes</div>
-          </div>
+        <div class="prog-node">
+          <div class="prog-num">US 11,782,507</div>
+          <div class="prog-dates">Filed Jul 2022 / Granted Oct 2023</div>
+          <div class="prog-label">Image Changes Based on Facial Appearance</div>
+          <div class="prog-type">New Application</div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ── Timeline ── -->
-  <section class="section">
-    <p class="section-label">Patent Timeline</p>
-    <h2 class="section-title">Filing to grant, four times over</h2>
-    <p class="section-desc">
-      Seven years from first filing to the most recent grant. Each application
-      was examined and allowed on its own merits.
+  <!-- Timeline -->
+  <div class="section">
+    <div class="section-rule">
+      <span class="section-rule-label">Filing History</span>
+      <div class="section-rule-line"></div>
+    </div>
+    <h2>Patent-by-Patent Record</h2>
+    <p class="section-intro">
+      Each entry below covers what the patent protects, how it relates to the
+      prior filings, and the prosecution timeline at the USPTO.
     </p>
 
     <div class="timeline">
+      <div class="timeline-spine"></div>
 
       <!-- Patent 1 -->
-      <div class="timeline-item">
-        <div class="timeline-dot" style="background: var(--accent);"></div>
-        <div class="patent-card">
-          <div class="patent-card-header">
-            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-              <a class="patent-number"
-                 href="https://patents.google.com/patent/US9990035B2/en"
-                 target="_blank" rel="noopener">US 9,990,035 B2</a>
-              <span class="status-badge status-granted">
-                <span class="status-dot"></span>Granted
-              </span>
-            </div>
-            <div class="patent-dates">
-              <div class="patent-date date-filed">
-                <span class="patent-date-dot"></span>Filed Mar 2016
-              </div>
-              <div class="patent-date date-grant">
-                <span class="patent-date-dot"></span>Granted Jun 2018
-              </div>
-            </div>
+      <div class="tl-item">
+        <div class="tl-date-col">
+          <div class="tl-year">2016</div>
+          <div class="tl-month">Mar</div>
+        </div>
+        <div class="tl-dot-col"></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <a class="tl-patent-num"
+               href="https://patents.google.com/patent/US9990035B2/en"
+               target="_blank" rel="noopener">US 9,990,035 B2</a>
+            <span class="granted-stamp">Granted</span>
           </div>
-          <h3 class="patent-title">Image Changes Based on Viewer's Gaze</h3>
-          <p class="patent-desc">
-            The first patent in the family covers a system that monitors where
-            a viewer is looking and updates the displayed image in response. Using
-            eye-tracking input, the display can shift content, reveal layers, or
-            transition between states based on gaze position and dwell time. The
-            claims cover both the detection method and the image-update logic that
-            responds to it.
-          </p>
-          <div class="patent-tags">
-            <span class="tag tag-blue">Eye Tracking</span>
-            <span class="tag tag-green">Adaptive Display</span>
-            <span class="tag tag-purple">G06F 3/013</span>
+          <h3 class="tl-title">Image Changes Based on Viewer's Gaze</h3>
+          <div class="tl-body">
+            <p>
+              This is the original filing in the family. The invention describes
+              a display system that tracks where a viewer is looking and updates
+              the image shown on the display in response to that gaze data. The
+              core claims cover the combination of an eye-tracking input mechanism
+              and a controller that translates detected gaze position into
+              instructions for changing the displayed image.
+            </p>
+            <p>
+              At the time of filing, eye-tracking technology was becoming more
+              accessible in consumer hardware, and the patent addressed a concrete
+              application of that capability: using gaze not just as a passive
+              metric but as an active input that drives what the viewer sees. The
+              prosecution took roughly two years from filing to grant, with the
+              USPTO classifying the invention under G06F 3/013, the subclass for
+              interfaces that recognize eye position and movement.
+            </p>
+          </div>
+          <div class="tl-dates-row">
+            <div class="tl-date-item">Filed: <strong>March 14, 2016</strong></div>
+            <div class="tl-date-item">Application No.: <strong>15/069,829</strong></div>
+            <div class="tl-date-item">Granted: <strong>June 5, 2018</strong></div>
+          </div>
+          <div class="cpc-pills">
+            <span class="cpc-pill">G06F 3/013</span>
+            <span class="cpc-pill">G06F 3/011</span>
+            <span class="cpc-pill">G06F 3/04845</span>
+            <span class="cpc-pill">G06F 3/0487</span>
           </div>
         </div>
       </div>
 
       <!-- Patent 2 -->
-      <div class="timeline-item">
-        <div class="timeline-dot" style="background: var(--accent2);"></div>
-        <div class="patent-card">
-          <div class="patent-card-header">
-            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-              <a class="patent-number"
-                 href="https://patents.google.com/patent/US10416765B2/en"
-                 target="_blank" rel="noopener">US 10,416,765 B2</a>
-              <span class="status-badge status-granted">
-                <span class="status-dot"></span>Granted
-              </span>
-            </div>
-            <div class="patent-dates">
-              <div class="patent-date date-filed">
-                <span class="patent-date-dot"></span>Filed Jun 2018
-              </div>
-              <div class="patent-date date-grant">
-                <span class="patent-date-dot"></span>Granted Sep 2019
-              </div>
-            </div>
+      <div class="tl-item">
+        <div class="tl-date-col">
+          <div class="tl-year">2018</div>
+          <div class="tl-month">Jun</div>
+        </div>
+        <div class="tl-dot-col"></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <a class="tl-patent-num"
+               href="https://patents.google.com/patent/US10416765B2/en"
+               target="_blank" rel="noopener">US 10,416,765 B2</a>
+            <span class="granted-stamp">Granted</span>
           </div>
-          <h3 class="patent-title">Image Changes Based on Viewer's Gaze (Continuation)</h3>
-          <p class="patent-desc">
-            A continuation of the original gaze patent, this filing extends the
-            claim set to cover additional scenarios and implementation details not
-            captured in the parent. Continuations let an inventor pursue claim
-            variations while the original patent is in prosecution, and this one
-            was granted just 15 months after filing, a fairly quick turnaround at
-            the USPTO.
-          </p>
-          <div class="patent-tags">
-            <span class="tag tag-blue">Continuation</span>
-            <span class="tag tag-green">Gaze Detection</span>
-            <span class="tag tag-purple">G06F 3/04845</span>
+          <h3 class="tl-title">Image Changes Based on Viewer's Gaze (Continuation)</h3>
+          <div class="tl-body">
+            <p>
+              Filed the same month the original gaze patent was granted, this
+              continuation pursues claim coverage on aspects of the invention that
+              were not fully captured by the first application. A continuation
+              shares its priority date with the parent, which means it benefits
+              from the earlier 2016 effective filing date when evaluating prior art.
+            </p>
+            <p>
+              The continuation strategy here is fairly standard: once a parent
+              patent issues, the applicant has a window to file a continuation and
+              direct the claim scope toward features or variations that were
+              disclosed but not yet claimed. This patent was granted in September
+              2019, about 15 months after filing, a faster prosecution cycle than
+              the original.
+            </p>
+          </div>
+          <div class="tl-dates-row">
+            <div class="tl-date-item">Filed: <strong>June 4, 2018</strong></div>
+            <div class="tl-date-item">Application No.: <strong>15/997,468</strong></div>
+            <div class="tl-date-item">Granted: <strong>September 17, 2019</strong></div>
+          </div>
+          <div class="cpc-pills">
+            <span class="cpc-pill">G06F 3/013</span>
+            <span class="cpc-pill">G06F 3/04845</span>
+            <span class="cpc-pill">G06F 3/0487</span>
           </div>
         </div>
       </div>
 
       <!-- Patent 3 -->
-      <div class="timeline-item">
-        <div class="timeline-dot" style="background: var(--accent3);"></div>
-        <div class="patent-card">
-          <div class="patent-card-header">
-            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-              <a class="patent-number"
-                 href="https://patents.google.com/patent/US11016563B2/en"
-                 target="_blank" rel="noopener">US 11,016,563 B2</a>
-              <span class="status-badge status-granted">
-                <span class="status-dot"></span>Granted
-              </span>
-            </div>
-            <div class="patent-dates">
-              <div class="patent-date date-filed">
-                <span class="patent-date-dot"></span>Filed Sep 2019
-              </div>
-              <div class="patent-date date-grant">
-                <span class="patent-date-dot"></span>Granted May 2021
-              </div>
-            </div>
+      <div class="tl-item">
+        <div class="tl-date-col">
+          <div class="tl-year">2019</div>
+          <div class="tl-month">Sep</div>
+        </div>
+        <div class="tl-dot-col"></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <a class="tl-patent-num"
+               href="https://patents.google.com/patent/US11016563B2/en"
+               target="_blank" rel="noopener">US 11,016,563 B2</a>
+            <span class="granted-stamp">Granted</span>
           </div>
-          <h3 class="patent-title">Image Changes Based on Voice</h3>
-          <p class="patent-desc">
-            The third patent takes the same core idea — a display that adapts to
-            viewer input — and applies it to voice. The system detects spoken
-            input and uses it to trigger image transitions or state changes on the
-            display. The claims cover the mapping from audio detection to visual
-            output, which is a distinct modality from gaze but sits in the same
-            conceptual space as the earlier work.
-          </p>
-          <div class="patent-tags">
-            <span class="tag tag-orange">Voice Input</span>
-            <span class="tag tag-green">Audio-Visual</span>
-            <span class="tag tag-purple">G06F 3/011</span>
+          <h3 class="tl-title">Image Changes Based on Voice</h3>
+          <div class="tl-body">
+            <p>
+              This application extended the core concept to a second input
+              modality. Rather than gaze, the triggering condition here is voice:
+              the system detects spoken input from the viewer and uses it to
+              determine how the displayed image should change. The claims address
+              the voice detection system, the logic that maps audio input to image
+              update instructions, and the display control mechanism that carries
+              those instructions out.
+            </p>
+            <p>
+              Filed two years after the continuation, this is a new application
+              rather than a continuation, so it carries its own priority date
+              of September 2019. It was granted in May 2021, roughly 20 months
+              after filing. The prosecution record at the USPTO sits under
+              Application No. 16/572,315.
+            </p>
+          </div>
+          <div class="tl-dates-row">
+            <div class="tl-date-item">Filed: <strong>September 16, 2019</strong></div>
+            <div class="tl-date-item">Application No.: <strong>16/572,315</strong></div>
+            <div class="tl-date-item">Granted: <strong>May 25, 2021</strong></div>
+          </div>
+          <div class="cpc-pills">
+            <span class="cpc-pill">G06F 3/013</span>
+            <span class="cpc-pill">G06F 3/011</span>
+            <span class="cpc-pill">G06F 3/0487</span>
           </div>
         </div>
       </div>
 
       <!-- Patent 4 -->
-      <div class="timeline-item">
-        <div class="timeline-dot" style="background: var(--accent4);"></div>
-        <div class="patent-card">
-          <div class="patent-card-header">
-            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-              <a class="patent-number"
-                 href="https://patents.google.com/patent/US11782507B2/en"
-                 target="_blank" rel="noopener">US 11,782,507 B2</a>
-              <span class="status-badge status-granted">
-                <span class="status-dot"></span>Granted
-              </span>
-            </div>
-            <div class="patent-dates">
-              <div class="patent-date date-filed">
-                <span class="patent-date-dot"></span>Filed Jul 2022
-              </div>
-              <div class="patent-date date-grant">
-                <span class="patent-date-dot"></span>Granted Oct 2023
-              </div>
-            </div>
+      <div class="tl-item">
+        <div class="tl-date-col">
+          <div class="tl-year">2022</div>
+          <div class="tl-month">Jul</div>
+        </div>
+        <div class="tl-dot-col"></div>
+        <div class="tl-card">
+          <div class="tl-card-top">
+            <a class="tl-patent-num"
+               href="https://patents.google.com/patent/US11782507B2/en"
+               target="_blank" rel="noopener">US 11,782,507 B2</a>
+            <span class="granted-stamp">Granted</span>
           </div>
-          <h3 class="patent-title">Image Changes Based on Facial Appearance</h3>
-          <p class="patent-desc">
-            The most recent granted patent extends the family into facial
-            recognition as an input channel. The system detects characteristics of
-            the viewer's face and uses them to determine which image to display or
-            how to modify the current one. This brings together computer vision,
-            real-time image processing, and the adaptive display logic established
-            across the earlier patents into a unified system.
-          </p>
-          <div class="patent-tags">
-            <span class="tag tag-orange">Facial Recognition</span>
-            <span class="tag tag-blue">Computer Vision</span>
-            <span class="tag tag-green">G06F 3/0487</span>
+          <h3 class="tl-title">Image Changes Based on Facial Appearance</h3>
+          <div class="tl-body">
+            <p>
+              The most recent granted patent applies the same adaptive display
+              concept to facial appearance as the input. The system uses computer
+              vision to detect characteristics of the viewer's face and uses those
+              characteristics to select or modify the image on the display. This
+              third modality, alongside gaze and voice, completes a framework in
+              which several distinct channels of human presence and expression can
+              each serve as the input to a responsive display.
+            </p>
+            <p>
+              The application was filed in July 2022 and granted in October 2023,
+              a prosecution duration of about 15 months. The published application,
+              US 2022/0350405 A1, is available in the USPTO's public file
+              and reflects the claims as originally filed before examination.
+            </p>
+          </div>
+          <div class="tl-dates-row">
+            <div class="tl-date-item">Filed: <strong>July 15, 2022</strong></div>
+            <div class="tl-date-item">Application No.: <strong>17/866,150</strong></div>
+            <div class="tl-date-item">Published: <strong>US 2022/0350405 A1</strong></div>
+            <div class="tl-date-item">Granted: <strong>October 10, 2023</strong></div>
+          </div>
+          <div class="cpc-pills">
+            <span class="cpc-pill">G06F 3/013</span>
+            <span class="cpc-pill">G06F 3/011</span>
+            <span class="cpc-pill">G06F 3/04845</span>
+            <span class="cpc-pill">G06F 3/0487</span>
           </div>
         </div>
       </div>
 
     </div>
-  </section>
+  </div>
 
-  <!-- ── CPC Classification ── -->
-  <section class="section">
-    <p class="section-label">Classification</p>
-    <h2 class="section-title">Where the USPTO filed this work</h2>
-    <p class="section-desc">
-      All four patents fall under cooperative patent classification G06F 3,
-      the subclass for interfaces between users and computers. More specifically,
-      the examiner classified them under detection of eye movements and
-      gesture-based interaction.
-    </p>
-    <div class="cpc-grid">
-      <div class="cpc-card">
-        <div class="cpc-code">G06F 3/013</div>
-        <div class="cpc-desc">Recognizing from the eye, e.g. iris or gaze — the core classification for the original gaze-based patents.</div>
-      </div>
-      <div class="cpc-card">
-        <div class="cpc-code">G06F 3/011</div>
-        <div class="cpc-desc">Detecting the position or movement of a finger, hand, or other body part — covers touch and proximity sensing aspects.</div>
-      </div>
-      <div class="cpc-card">
-        <div class="cpc-code">G06F 3/04845</div>
-        <div class="cpc-desc">Scrolling or panning — appears in the continuation patent where the gaze interaction drives content scrolling behavior.</div>
-      </div>
-      <div class="cpc-card">
-        <div class="cpc-code">G06F 3/0487</div>
-        <div class="cpc-desc">Using special purpose keys or input combinations — the USPTO's classification for the multi-modal input claims.</div>
-      </div>
+  <!-- CPC Classification -->
+  <div class="section">
+    <div class="section-rule">
+      <span class="section-rule-label">Classification</span>
+      <div class="section-rule-line"></div>
     </div>
-  </section>
-
-  <!-- ── Inventors ── -->
-  <section class="section">
-    <p class="section-label">Inventorship</p>
-    <h2 class="section-title">A collaborative family project</h2>
-    <p class="section-desc">
-      Every patent in this portfolio shares the same inventor group: three
-      generations of the Richmond family alongside two collaborators. The
-      consistent inventorship across all four filings reflects a genuinely shared
-      creative process, not a rotation of named inventors for strategic reasons.
+    <h2>CPC Subclasses Applied</h2>
+    <p class="section-intro">
+      The USPTO examiner assigned all four patents to subclasses of G06F 3, which
+      covers input arrangements for interacting with computers. The specific
+      subclasses reflect the dual nature of the inventions: detecting physiological
+      signals on one side and translating them into interface commands on the other.
     </p>
-    <div class="inventors-list">
-      <span class="inventor-chip highlight">Owen Sagan Richmond</span>
-      <span class="inventor-chip">Robert L. Richmond</span>
-      <span class="inventor-chip">Maxwell Wolfe Richmond</span>
-      <span class="inventor-chip">Eli Newton Richmond</span>
-      <span class="inventor-chip">Jeffrey T. Haley</span>
-      <span class="inventor-chip">Thomas Leonard Schworer</span>
+    <table class="cpc-table">
+      <thead>
+        <tr>
+          <th>CPC Code</th>
+          <th>Description</th>
+          <th>Appears In</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>G06F 3/013</td>
+          <td>Detecting position or movement of the eye; recognizing eye-movement based input. The primary classification for the gaze-based patents.</td>
+          <td>All four patents</td>
+        </tr>
+        <tr>
+          <td>G06F 3/011</td>
+          <td>Detecting the position or movement of a body part used as input. Covers proximity and presence detection aspects of the claims.</td>
+          <td>US 9,990,035; US 11,016,563; US 11,782,507</td>
+        </tr>
+        <tr>
+          <td>G06F 3/04845</td>
+          <td>Scrolling or panning; navigating through displayed content. Appears in the continuation where gaze-driven content navigation is claimed.</td>
+          <td>US 9,990,035; US 10,416,765; US 11,782,507</td>
+        </tr>
+        <tr>
+          <td>G06F 3/0487</td>
+          <td>Using special-purpose keys or combinations of keys as input. Covers multi-signal and compound-input aspects of the claim set.</td>
+          <td>All four patents</td>
+        </tr>
+        <tr>
+          <td>G06F2203/04806</td>
+          <td>Determining context for adaptation of the interface. Cross-reference subclass noting the context-sensitive nature of the image changes.</td>
+          <td>All four patents</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Inventors -->
+  <div class="section">
+    <div class="section-rule">
+      <span class="section-rule-label">Inventorship</span>
+      <div class="section-rule-line"></div>
     </div>
-  </section>
-
-  <div style="height: 56px;"></div>
-
-  <!-- ── Footer ── -->
-  <footer>
-    <span>Owen Sagan Richmond &mdash; US Patent Portfolio</span>
-    <span>
-      Data via
-      <a href="https://api.uspto.gov" target="_blank" rel="noopener">USPTO Open Data Portal</a>
-      &nbsp;&middot;&nbsp;
-      <a href="https://patents.google.com" target="_blank" rel="noopener">Google Patents</a>
-    </span>
-  </footer>
+    <h2>Named Inventors</h2>
+    <p class="section-intro">
+      The same six inventors appear on all four patents. Robert, Maxwell, Eli,
+      and Owen Richmond are family members. Jeffrey Haley and Thomas Schworer
+      collaborated with the family across the full span of the portfolio.
+    </p>
+    <div class="inventor-grid">
+      <div class="inventor-cell primary">Owen Sagan Richmond</div>
+      <div class="inventor-cell">Robert L. Richmond</div>
+      <div class="inventor-cell">Maxwell Wolfe Richmond</div>
+      <div class="inventor-cell">Eli Newton Richmond</div>
+      <div class="inventor-cell">Jeffrey T. Haley</div>
+      <div class="inventor-cell">Thomas Leonard Schworer</div>
+    </div>
+  </div>
 
 </div>
 
-<script>
-  // Fade in timeline items as they scroll into view
-  const items = document.querySelectorAll('.timeline-item');
-  const observer = new IntersectionObserver(
-    entries => entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    }),
-    { threshold: 0.1 }
-  );
-  items.forEach((item, i) => {
-    item.style.transitionDelay = `${i * 60}ms`;
-    observer.observe(item);
-  });
-</script>
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <span>Owen Sagan Richmond &mdash; United States Patent Portfolio</span>
+    <span>
+      Source data via
+      <a href="https://api.uspto.gov" target="_blank" rel="noopener">USPTO Open Data Portal</a>.
+      Verify all information against official USPTO records before reliance.
+    </span>
+  </div>
+</footer>
 
 </body>
 </html>
